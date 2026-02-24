@@ -21,6 +21,7 @@ extension Color {
         case 8:
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
+            assertionFailure("Invalid hex color: \(hex)")
             (a, r, g, b) = (255, 0, 0, 0)
         }
         

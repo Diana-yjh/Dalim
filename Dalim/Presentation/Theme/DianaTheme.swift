@@ -31,7 +31,7 @@ enum DianaTheme {
     
     // MARK: - 그라디언트
     static let limeGradient = LinearGradient(colors: [neonLime, neonBlue], startPoint: .leading, endPoint: .trailing)
-    static let pinktGradient = LinearGradient(colors: [neonPink, neonOrange], startPoint: .leading, endPoint: .trailing)
+    static let pinkGradient = LinearGradient(colors: [neonPink, neonOrange], startPoint: .leading, endPoint: .trailing)
     
     // MARK: - 폰트
     static func titleFont(_ size: CGFloat = 28) -> Font {
