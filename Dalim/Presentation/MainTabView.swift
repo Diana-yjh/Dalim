@@ -25,7 +25,7 @@ struct MainTabView: View {
             }
             
             Tab("마이페이지", systemImage: "person.fill", value: 3) {
-                
+                MyPageView()
             }
         }
         .tint(DianaTheme.neonLime)

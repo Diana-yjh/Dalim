@@ -13,6 +13,8 @@ struct DalimApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             RunRecord.self,
+            UserProfile.self,
+            UserSettings.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
