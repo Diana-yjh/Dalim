@@ -1,0 +1,42 @@
+//
+//  MainTabView.swift
+//  Dalim
+//
+//  Created by Yejin Hong on 2/25/26.
+//
+
+import SwiftUI
+
+struct MainTabView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            Tab("대시보드", systemImage: "house.fill", value: 0) {
+                DashboardView()
+            }
+            
+            Tab("러닝", systemImage: "figure.run", value: 1) {
+                
+            }
+            
+            Tab("기록", systemImage: "list.star", value: 2) {
+                
+            }
+            
+            Tab("마이페이지", systemImage: "person.fill", value: 3) {
+                
+            }
+        }
+        .tint(tintColor(for: selectedTab))
+    }
+    
+    func tintColor(for tab: Int) -> Color {
+        switch tab {
+        case 0 ,1, 2:
+            return DianaTheme.neonLime
+        default:
+            return .white
+        }
+    }
+}

@@ -15,9 +15,9 @@ enum DianaTheme {
     static let neonOrange = Color(hex: "FF8800")
     
     // MARK: - 배경
-    static let backgroundPrimary = Color(hex: "121212")
-    static let backgroundSecondary = Color(hex: "1C1C1E")
-    static let backgroundCard = Color(hex: "2C2C2E")
+    static let backgroundPrimary = Color(hex: "0A0A0E")
+    static let backgroundSecondary = Color(hex: "1E1E1E")
+    static let backgroundCard = Color(hex: "14141F")
     
     // MARK: - 텍스트
     static let textPrimary = Color.white
@@ -30,14 +30,20 @@ enum DianaTheme {
     static let error = Color(hex: "FF453A")
     
     // MARK: - 그라디언트
-    static let limeGradient = LinearGradient(colors: [neonLime, neonBlue], startPoint: .leading, endPoint: .trailing)
+    static let neonLime2 = Color(hex: "85FF6A")
+    
+    static let limeGradient = LinearGradient(colors: [neonLime, neonLime2], startPoint: .leading, endPoint: .trailing)
     static let pinkGradient = LinearGradient(colors: [neonPink, neonOrange], startPoint: .leading, endPoint: .trailing)
     
     // MARK: - 폰트
     static func titleFont(_ size: CGFloat = 28) -> Font {
-        .custom("Outfit-Bold", size: size)
+        .custom("Pretendard-Bold", size: size)
     }
 
+    static func subtitleFont(_ size: CGFloat = 22) -> Font {
+        .custom("Pretendard-SemiBold", size: size)
+    }
+    
     static func headlineFont(_ size: CGFloat = 20) -> Font {
         .custom("Outfit-SemiBold", size: size)
     }
@@ -46,8 +52,12 @@ enum DianaTheme {
         .custom("Pretendard-Regular", size: size)
     }
 
-    static func captionFont(_ size: CGFloat = 13) -> Font {
+    static func captionKorFont(_ size: CGFloat = 13) -> Font {
         .custom("Pretendard-Light", size: size)
+    }
+    
+    static func captionEngFont(_ size: CGFloat = 13) -> Font {
+        .custom("Outfit-Light", size: size)
     }
 
     static func statFont(_ size: CGFloat = 40) -> Font {
@@ -56,21 +66,29 @@ enum DianaTheme {
     
     // MARK: - 카드 스타일
     static let cardCornerRadius: CGFloat = 16
-    static let cardPadding: CGFloat = 16
+    static let cardPadding: CGFloat = 20
 }
 
 // MARK: - 카드 디자인 템플릿
 struct DianaCardModifier: ViewModifier {
+    var borderColor: Color
+    
     func body(content: Content) -> some View {
         content
             .padding(DianaTheme.cardPadding)
-            .background(DianaTheme.backgroundCard)
-            .clipShape(RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius))
+            .background(
+                RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius)
+                    .fill(DianaTheme.backgroundCard)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius)
+                            .stroke(borderColor, lineWidth: 0.2)
+                    )
+            )
     }
 }
 
 extension View {
-    func dianaCard() -> some View {
-        modifier(DianaCardModifier())
+    func dianaCard(_ color: Color) -> some View {
+        modifier(DianaCardModifier(borderColor: color))
     }
 }
