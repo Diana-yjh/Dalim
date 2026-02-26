@@ -28,15 +28,16 @@ struct MainTabView: View {
                 
             }
         }
-        .tint(tintColor(for: selectedTab))
-    }
-    
-    func tintColor(for tab: Int) -> Color {
-        switch tab {
-        case 0 ,1, 2:
-            return DianaTheme.neonLime
-        default:
-            return .white
+        .tint(DianaTheme.neonLime)
+        .onAppear {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithTransparentBackground()
+            appearance.stackedLayoutAppearance.normal.iconColor = .white
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.stackedLayoutAppearance.selected.iconColor = UIColor(DianaTheme.neonLime)
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(DianaTheme.neonLime)]
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
         }
     }
 }
