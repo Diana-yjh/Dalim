@@ -13,7 +13,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("대시보드", systemImage: "house.fill", value: 0) {
-                DashboardView()
+                DashboardView(selectedTab: $selectedTab)
             }
             
             Tab("러닝", systemImage: "figure.run", value: 1) {

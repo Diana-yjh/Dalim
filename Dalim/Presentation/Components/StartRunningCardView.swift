@@ -11,27 +11,28 @@ struct StartRunningCardView: View {
     let headerCaption: String
     let actionTitle: String
     let weatherSummary: String
-    
+    @Binding var selectedTab: Int
+
     var body: some View {
         HStack(spacing: 6) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(headerCaption)
                     .font(DianaTheme.captionEngFont())
                     .foregroundStyle(DianaTheme.textSecondary)
-                
+
                 Text(actionTitle)
                     .font(DianaTheme.subtitleFont())
                     .foregroundStyle(DianaTheme.textPrimary)
-                
+
                 Text(weatherSummary)
                     .font(DianaTheme.captionKorFont())
                     .foregroundStyle(DianaTheme.textSecondary)
             }
-            
+
             Spacer()
-            
+
             Button {
-                
+                selectedTab = 1
             } label: {
                 Image(systemName: "play.fill")
                     .size(15)
@@ -48,5 +49,10 @@ struct StartRunningCardView: View {
 }
 
 #Preview {
-    StartRunningCardView(headerCaption: "READY TO RUN?", actionTitle: "러닝 시작하기", weatherSummary: "맑음 · 체감 -2°C · 러닝 적합 🟢")
+    StartRunningCardView(
+        headerCaption: "READY TO RUN?",
+        actionTitle: "러닝 시작하기",
+        weatherSummary: "맑음 · 체감 -2°C · 러닝 적합 🟢",
+        selectedTab: .constant(0)
+    )
 }

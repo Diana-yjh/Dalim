@@ -10,7 +10,8 @@ import SwiftUI
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = DashboardViewModel()
-    
+    @Binding var selectedTab: Int
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -18,24 +19,34 @@ struct DashboardView: View {
                     StartRunningCardView(
                         headerCaption: "READY TO RUN?",
                         actionTitle: "러닝 시작하기",
-                        weatherSummary: "맑음 · 체감 -2°C · 러닝 적합 🟢"
+                        weatherSummary: viewModel.weatherSummary,
+                        selectedTab: $selectedTab
                     )
-                    
-                    WeeklyRunningView()
-                    
+
+                    WeeklyRunningView(
+                        weeklyDistance: viewModel.weeklyDistance,
+                        weeklyGoalKm: viewModel.weeklyGoalKm,
+                        todayIndex: viewModel.todayIndex,
+                        recordExistsFlags: viewModel.recordExistsFlags
+                    )
+
                     HStack(spacing: 8) {
                         StatCardView(
                             caption: "AVG PACE",
-                            value: "5'42\"",
-                            alert: "▲ 0'12\" 상승",
-                            alertColor: DianaTheme.neonLime
+                            value: viewModel.averagePaceString,
+                            alert: viewModel.paceChangeText,
+                            alertColor: viewModel.alertColor
                         )
 
                         StatCardView(
                             caption: "TOTAL RUNS",
-                            value: "12",
-                            alert: "🔥 5일 연속",
-                            alertColor: DianaTheme.neonOrange
+                            value: "\(viewModel.totalRuns)",
+                            alert: viewModel.consecutiveDays > 0
+                                ? "🔥 \(viewModel.consecutiveDays)일 연속"
+                                : "러닝을 시작해보세요",
+                            alertColor: viewModel.consecutiveDays > 0
+                                ? DianaTheme.neonOrange
+                                : DianaTheme.textSecondary
                         )
                     }
                 }
@@ -47,6 +58,9 @@ struct DashboardView: View {
             .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .task {
+                await viewModel.loadData(modelContext: modelContext)
+            }
             .onAppear {
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithOpaqueBackground()
@@ -58,5 +72,5 @@ struct DashboardView: View {
 }
 
 #Preview {
-    DashboardView()
+    DashboardView(selectedTab: .constant(0))
 }

@@ -31,8 +31,8 @@ struct RunningSetupView: View {
                 ActiveRunView()
             }
         }
-        .onAppear {
-            viewModel.requestWeather()
+        .task {
+            await viewModel.requestWeather()
         }
     }
 
