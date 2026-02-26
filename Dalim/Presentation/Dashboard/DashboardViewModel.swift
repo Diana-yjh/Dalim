@@ -15,6 +15,7 @@ final class DashboardViewModel {
     // MARK: - 프로필
     var userName: String = "러너"
     var profileImageData: Data?
+    var isLinked: Bool = false
 
     // MARK: - 건강 데이터
     var todaySteps: String = "--"
@@ -57,6 +58,7 @@ final class DashboardViewModel {
         if let profile = (try? modelContext.fetch(descriptor))?.first {
             userName = profile.name
             profileImageData = profile.profileImageData
+            isLinked = profile.isLinked
         }
     }
 

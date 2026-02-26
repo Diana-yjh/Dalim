@@ -18,6 +18,7 @@ struct MyPageView: View {
     @State private var editedName = ""
     @State private var gpxFileURL: URL?
     @State private var showShareSheet = false
+    @State private var showLinkSheet = false
 
     // MARK: - Computed Properties
 
@@ -108,12 +109,44 @@ struct MyPageView: View {
             Text("\(dateString) 시작")
                 .font(DianaTheme.captionKorFont())
                 .foregroundStyle(DianaTheme.textSecondary)
+
+            if profile.isLinked {
+                HStack(spacing: 6) {
+                    Image(systemName: profile.authProvider == "apple" ? "apple.logo" : "globe")
+                        .font(.system(size: 12))
+                    Text(profile.authProvider == "apple" ? "Apple 연동됨" : "Google 연동됨")
+                        .font(DianaTheme.captionKorFont(12))
+                }
+                .foregroundStyle(DianaTheme.neonLime)
+            } else {
+                Button {
+                    showLinkSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "link")
+                            .font(.system(size: 12))
+                        Text("계정 연동하기")
+                            .font(DianaTheme.captionKorFont(13))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundStyle(DianaTheme.neonLime)
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .dianaCard(DianaTheme.neonLime)
         .onTapGesture {
             editedName = profile.name
             isEditingName = true
+        }
+        .sheet(isPresented: $showLinkSheet) {
+            AccountLinkSheet { result in
+                profile.name = result.name
+                profile.isLinked = true
+                profile.authProvider = result.provider
+                profile.authUserID = result.userID
+            }
         }
     }
 

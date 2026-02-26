@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileHeaderView: View {
     let userName: String
     let profileImageData: Data?
+    var isLinked: Bool = false
+    var onLinkAccount: (() -> Void)?
 
     var body: some View {
         HStack(spacing: 14) {
@@ -24,6 +26,21 @@ struct ProfileHeaderView: View {
                 Text(userName)
                     .font(DianaTheme.subtitleFont(20))
                     .foregroundStyle(DianaTheme.textPrimary)
+
+                if !isLinked {
+                    Button {
+                        onLinkAccount?()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("계정연동하기")
+                                .font(DianaTheme.captionEngFont(12))
+                                .tracking(DianaTheme.uppercaseTracking)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 10, weight: .semibold))
+                        }
+                        .foregroundStyle(DianaTheme.neonLime)
+                    }
+                }
             }
 
             Spacer()
