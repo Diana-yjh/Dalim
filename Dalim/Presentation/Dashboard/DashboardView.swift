@@ -26,7 +26,19 @@ struct DashboardView: View {
                     WeeklyRunningView()
                     
                     HStack(spacing: 8) {
-                        
+                        StatCardView(
+                            caption: "AVG PACE",
+                            value: "5'42\"",
+                            alert: "▲ 0'12\" 상승",
+                            alertColor: DianaTheme.neonLime
+                        )
+
+                        StatCardView(
+                            caption: "TOTAL RUNS",
+                            value: "12",
+                            alert: "🔥 5일 연속",
+                            alertColor: DianaTheme.neonOrange
+                        )
                     }
                 }
                 .padding(.horizontal, 16)
