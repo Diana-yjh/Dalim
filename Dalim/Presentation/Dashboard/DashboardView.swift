@@ -15,8 +15,6 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    headerView()
-                    
                     StartRunningCardView(
                         headerCaption: "READY TO RUN?",
                         actionTitle: "러닝 시작하기",
@@ -45,31 +43,10 @@ struct DashboardView: View {
                 .padding(.top, 8)
             }
             .background(DianaTheme.backgroundPrimary)
+            .navigationTitle("대시보드")
+            .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
-        }
-    }
-    
-    private func headerView() -> some View {
-        HStack(spacing: 6) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("SUNDAY, FEB 23")
-                    .font(DianaTheme.captionEngFont())
-                    .foregroundStyle(DianaTheme.textSecondary)
-                
-                Text("좋은 저녁이에요 👋")
-                    .font(DianaTheme.titleFont())
-                    .foregroundStyle(DianaTheme.textPrimary)
-            }
-            
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(systemName: "figure.run")
-                    .size(15)
-            }
-            .buttonStyle(DianaCircleButtonStyle(color: DianaTheme.neonLime, size: 30))
         }
     }
 }
