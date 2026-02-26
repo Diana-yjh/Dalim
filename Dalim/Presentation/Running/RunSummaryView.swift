@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import MapKit
 import Charts
 
@@ -14,6 +15,7 @@ struct RunSummaryView: View {
     var onDismiss: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ScrollView {
@@ -181,6 +183,7 @@ struct RunSummaryView: View {
             .buttonStyle(DianaSecondaryButtonStyle())
 
             Button {
+                saveRunRecord()
                 dismiss()
                 onDismiss()
             } label: {
@@ -202,5 +205,34 @@ struct RunSummaryView: View {
 
     private var shareText: String {
         "🏃 러닝 완료!\n거리: \(viewModel.distanceString) km\n시간: \(viewModel.elapsedTimeString)\n페이스: \(viewModel.paceString)"
+    }
+
+    // MARK: - 기록 저장
+    private func saveRunRecord() {
+        let now = Date()
+        let startDate = now.addingTimeInterval(-viewModel.elapsedTime)
+
+        let routePoints = viewModel.routeCoordinates.enumerated().map { index, coord in
+            RoutePoint(
+                latitude: coord.latitude,
+                longitude: coord.longitude,
+                altitude: 0,
+                timestamp: startDate.addingTimeInterval(Double(index) * (viewModel.elapsedTime / max(Double(viewModel.routeCoordinates.count), 1)))
+            )
+        }
+
+        let record = RunRecord(
+            startDate: startDate,
+            endDate: now,
+            distance: viewModel.distance,
+            duration: viewModel.elapsedTime,
+            averagePace: viewModel.currentPace,
+            calories: viewModel.calories,
+            elevationGain: viewModel.elevationGain,
+            averageHeartRate: viewModel.heartRate > 0 ? viewModel.heartRate : nil,
+            routePoints: routePoints
+        )
+
+        modelContext.insert(record)
     }
 }

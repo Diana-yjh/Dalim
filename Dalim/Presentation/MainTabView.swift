@@ -21,7 +21,7 @@ struct MainTabView: View {
             }
             
             Tab("기록", systemImage: "list.star", value: 2) {
-                
+                HistoryView()
             }
             
             Tab("마이페이지", systemImage: "person.fill", value: 3) {
