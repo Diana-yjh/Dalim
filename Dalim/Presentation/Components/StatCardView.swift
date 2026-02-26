@@ -10,6 +10,7 @@ import SwiftUI
 struct StatCardView: View {
     let caption: String
     let value: String
+    let unit: String
     let alert: String
     let alertColor: Color
     var borderColor: Color = DianaTheme.cardBorder
@@ -21,9 +22,15 @@ struct StatCardView: View {
                 .foregroundStyle(DianaTheme.textSecondary)
                 .tracking(DianaTheme.uppercaseTracking)
 
-            Text(value)
-                .font(DianaTheme.statFont(24))
-                .foregroundStyle(DianaTheme.textPrimary)
+            HStack(alignment: .firstTextBaseline) {
+                Text(value)
+                    .font(DianaTheme.statFont(24))
+                    .foregroundStyle(DianaTheme.textPrimary)
+                Text(unit)
+                    .font(DianaTheme.captionEngFont())
+                    .foregroundStyle(DianaTheme.textSecondary)
+                    .padding(.leading, 2)
+            }
 
             Text(alert)
                 .font(DianaTheme.captionKorFont())
@@ -39,12 +46,14 @@ struct StatCardView: View {
         StatCardView(
             caption: "AVG PACE",
             value: "5'42\"",
+            unit: "km",
             alert: "▲ 0'12\" 상승",
             alertColor: DianaTheme.neonLime
         )
         StatCardView(
             caption: "TOTAL RUNS",
             value: "12",
+            unit: "일",
             alert: "🔥 5일 연속",
             alertColor: DianaTheme.neonOrange
         )
