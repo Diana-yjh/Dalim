@@ -8,14 +8,25 @@
 import Foundation
 import SwiftData
 import Observation
+import HealthKit
 
 @Observable
 final class DashboardViewModel {
+    // MARK: - 프로필
+    var userName: String = "러너"
+    var profileImageData: Data?
+
+    // MARK: - 건강 데이터
+    var todaySteps: String = "--"
+    var todayKcal: String = "--"
+    var currentBPM: String = "--"
+
     // MARK: - 주간 데이터
     var weeklyDistance: Double = 0.0
     var weeklyGoalKm: Double = 40.0
     var todayIndex: Int = 0
     var recordExistsFlags: [Bool] = Array(repeating: false, count: 7)
+    var dailyDistances: [Double] = Array(repeating: 0, count: 7)
 
     // MARK: - 통계
     var averagePaceString: String = "--'--\""
@@ -28,12 +39,101 @@ final class DashboardViewModel {
     var weatherSummary: String = "날씨 정보 로딩 중..."
 
     private let weatherService = WeatherService()
+    private let healthStore = HKHealthStore()
 
     // MARK: - 데이터 로딩
 
     func loadData(modelContext: ModelContext) async {
+        loadProfile(modelContext: modelContext)
         loadRunData(modelContext: modelContext)
+        await loadHealthData()
         await loadWeather()
+    }
+
+    // MARK: - 프로필 로드
+
+    private func loadProfile(modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<UserProfile>()
+        if let profile = (try? modelContext.fetch(descriptor))?.first {
+            userName = profile.name
+            profileImageData = profile.profileImageData
+        }
+    }
+
+    // MARK: - HealthKit 데이터
+
+    private func loadHealthData() async {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+
+        let stepType = HKQuantityType(.stepCount)
+        let energyType = HKQuantityType(.activeEnergyBurned)
+        let heartRateType = HKQuantityType(.heartRate)
+
+        let typesToRead: Set<HKSampleType> = [stepType, energyType, heartRateType]
+
+        do {
+            try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
+        } catch {
+            return
+        }
+
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfDay = calendar.startOfDay(for: now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
+
+        // 걸음수
+        if let steps = try? await fetchSum(type: stepType, predicate: predicate, unit: .count()) {
+            todaySteps = formatNumber(Int(steps))
+        }
+
+        // 칼로리
+        if let kcal = try? await fetchSum(type: energyType, predicate: predicate, unit: .kilocalorie()) {
+            todayKcal = formatNumber(Int(kcal))
+        }
+
+        // 심박수 (최근)
+        if let bpm = try? await fetchLatestHeartRate() {
+            currentBPM = "\(Int(bpm))"
+        }
+    }
+
+    private func fetchSum(type: HKQuantityType, predicate: NSPredicate, unit: HKUnit) async throws -> Double {
+        try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: result?.sumQuantity()?.doubleValue(for: unit) ?? 0)
+                }
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    private func fetchLatestHeartRate() async throws -> Double {
+        let heartRateType = HKQuantityType(.heartRate)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(sampleType: heartRateType, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else if let sample = samples?.first as? HKQuantitySample {
+                    let bpm = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
+                    continuation.resume(returning: bpm)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "HealthKit", code: -1))
+                }
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+    private func formatNumber(_ value: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
     // MARK: - RunRecord 기반 계산
@@ -69,14 +169,17 @@ final class DashboardViewModel {
         // 주간 거리
         weeklyDistance = thisWeekRecords.reduce(0) { $0 + $1.distanceInKm }
 
-        // 요일별 기록 존재 여부
+        // 요일별 기록 존재 여부 + 요일별 거리
         var flags = Array(repeating: false, count: 7)
+        var distances = Array(repeating: 0.0, count: 7)
         for record in thisWeekRecords {
             let day = cal.component(.weekday, from: record.startDate)
             let index = (day + 5) % 7
             flags[index] = true
+            distances[index] += record.distanceInKm
         }
         recordExistsFlags = flags
+        dailyDistances = distances
 
         // 평균 페이스 (전체)
         if !records.isEmpty {

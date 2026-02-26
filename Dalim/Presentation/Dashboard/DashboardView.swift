@@ -16,18 +16,30 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    StartRunningCardView(
-                        headerCaption: "READY TO RUN?",
-                        actionTitle: "러닝 시작하기",
-                        weatherSummary: viewModel.weatherSummary,
-                        selectedTab: $selectedTab
+                    ProfileHeaderView(
+                        userName: viewModel.userName,
+                        profileImageData: viewModel.profileImageData
+                    )
+
+                    StatsRowView(
+                        steps: viewModel.todaySteps,
+                        kcal: viewModel.todayKcal,
+                        bpm: viewModel.currentBPM
                     )
 
                     WeeklyRunningView(
                         weeklyDistance: viewModel.weeklyDistance,
                         weeklyGoalKm: viewModel.weeklyGoalKm,
                         todayIndex: viewModel.todayIndex,
-                        recordExistsFlags: viewModel.recordExistsFlags
+                        recordExistsFlags: viewModel.recordExistsFlags,
+                        dailyDistances: viewModel.dailyDistances
+                    )
+
+                    StartRunningCardView(
+                        headerCaption: "READY TO RUN?",
+                        actionTitle: "러닝 시작하기",
+                        weatherSummary: viewModel.weatherSummary,
+                        selectedTab: $selectedTab
                     )
 
                     HStack(spacing: 8) {
@@ -42,7 +54,7 @@ struct DashboardView: View {
                             caption: "TOTAL RUNS",
                             value: "\(viewModel.totalRuns)",
                             alert: viewModel.consecutiveDays > 0
-                                ? "🔥 \(viewModel.consecutiveDays)일 연속"
+                                ? "\(viewModel.consecutiveDays)일 연속"
                                 : "러닝을 시작해보세요",
                             alertColor: viewModel.consecutiveDays > 0
                                 ? DianaTheme.neonOrange
