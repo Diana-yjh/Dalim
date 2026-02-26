@@ -13,6 +13,9 @@ final class UserProfile {
     var name: String
     var profileImageData: Data?
     var joinDate: Date
+    var isLinked: Bool = false
+    var authProvider: String = ""    // "apple" | "google" | ""
+    var authUserID: String = ""
 
     init(name: String = "러너", profileImageData: Data? = nil, joinDate: Date = Date()) {
         self.name = name
