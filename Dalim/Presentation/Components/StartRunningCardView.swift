@@ -19,6 +19,7 @@ struct StartRunningCardView: View {
                 Text(headerCaption)
                     .font(DianaTheme.captionEngFont())
                     .foregroundStyle(DianaTheme.textSecondary)
+                    .tracking(DianaTheme.uppercaseTracking)
 
                 Text(actionTitle)
                     .font(DianaTheme.subtitleFont())
@@ -44,7 +45,7 @@ struct StartRunningCardView: View {
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 }
 

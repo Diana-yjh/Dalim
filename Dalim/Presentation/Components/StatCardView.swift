@@ -12,13 +12,14 @@ struct StatCardView: View {
     let value: String
     let alert: String
     let alertColor: Color
-    var borderColor: Color = DianaTheme.textTertiary
+    var borderColor: Color = DianaTheme.cardBorder
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(caption)
                 .font(DianaTheme.captionEngFont())
                 .foregroundStyle(DianaTheme.textSecondary)
+                .tracking(DianaTheme.uppercaseTracking)
 
             Text(value)
                 .font(DianaTheme.statFont(24))

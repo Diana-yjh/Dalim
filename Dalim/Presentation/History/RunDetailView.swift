@@ -77,7 +77,7 @@ struct RunDetailView: View {
                     .font(DianaTheme.captionKorFont(14))
                     .foregroundStyle(DianaTheme.textTertiary)
                     .frame(maxWidth: .infinity, minHeight: 200)
-                    .dianaCard(DianaTheme.textTertiary)
+                    .dianaCard()
             } else {
                 Map {
                     MapPolyline(coordinates: coordinates)
@@ -123,7 +123,7 @@ struct RunDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: 60)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 삭제 버튼

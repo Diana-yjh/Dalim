@@ -38,7 +38,7 @@ struct HistoryCalendarView: View {
             weekdayHeader
             daysGrid
         }
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 월 이동 헤더
@@ -176,7 +176,7 @@ struct HistoryCalendarView: View {
             .font(DianaTheme.captionEngFont(12))
             .foregroundStyle(DianaTheme.textSecondary)
         }
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - Helpers

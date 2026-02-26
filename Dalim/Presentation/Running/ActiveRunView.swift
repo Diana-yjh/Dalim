@@ -59,32 +59,31 @@ struct ActiveRunView: View {
         .frame(height: UIScreen.main.bounds.height * 2 / 3)
     }
 
-    // MARK: - 거리 (중앙 강조)
+    // MARK: - 타이머 (중앙 강조)
     private var distanceSection: some View {
         VStack(spacing: 4) {
-            HStack(alignment: .lastTextBaseline, spacing: 4) {
-                Text(viewModel.distanceString)
-                    .font(DianaTheme.statFont(52))
-                    .foregroundStyle(DianaTheme.textPrimary)
+            Text(viewModel.elapsedTimeString)
+                .font(DianaTheme.statFont(56))
+                .foregroundStyle(DianaTheme.textPrimary)
 
-                Text("km")
-                    .font(DianaTheme.captionEngFont(18))
-                    .foregroundStyle(DianaTheme.textSecondary)
-            }
+            Text("TIME")
+                .font(DianaTheme.captionEngFont(13))
+                .foregroundStyle(DianaTheme.textSecondary)
+                .tracking(DianaTheme.uppercaseTracking)
         }
         .padding(.top, 16)
     }
 
-    // MARK: - 시간/페이스/심박수 카드
+    // MARK: - 거리/페이스/심박수 카드
     private var statsRow: some View {
         HStack(spacing: 0) {
-            miniStat(label: "시간", value: viewModel.elapsedTimeString, unit: "")
+            miniStat(label: "DISTANCE", value: viewModel.distanceString, unit: "km")
             miniDivider
-            miniStat(label: "페이스", value: viewModel.paceString, unit: "/km")
+            miniStat(label: "PACE", value: viewModel.paceString, unit: "/km")
             miniDivider
-            miniStat(label: "심박수", value: viewModel.heartRateString, unit: "bpm")
+            miniStat(label: "BPM", value: viewModel.heartRateString, unit: "")
         }
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
         .padding(.horizontal, 16)
         .padding(.top, 8)
     }
@@ -92,8 +91,9 @@ struct ActiveRunView: View {
     private func miniStat(label: String, value: String, unit: String) -> some View {
         VStack(spacing: 4) {
             Text(label)
-                .font(DianaTheme.captionKorFont(11))
+                .font(DianaTheme.captionEngFont(11))
                 .foregroundStyle(DianaTheme.textSecondary)
+                .tracking(DianaTheme.uppercaseTracking)
 
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)

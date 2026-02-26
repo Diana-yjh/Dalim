@@ -9,15 +9,15 @@ import SwiftUI
 
 enum DianaTheme {
     // MARK: - 메인 컬러
-    static let neonLime = Color(hex: "39FF14")
+    static let neonLime = Color(hex: "CCFF00")
     static let neonBlue = Color(hex: "08F0FF")
     static let neonPink = Color(hex: "FE2E78")
     static let neonOrange = Color(hex: "FF8800")
 
     // MARK: - 배경
-    static let backgroundPrimary = Color(hex: "0A0A0E")
+    static let backgroundPrimary = Color(hex: "0A0A0A")
     static let backgroundSecondary = Color(hex: "1E1E1E")
-    static let backgroundCard = Color(hex: "14141F")
+    static let backgroundCard = Color(hex: "161616")
 
     // MARK: - 텍스트
     static let textPrimary = Color.white
@@ -30,7 +30,7 @@ enum DianaTheme {
     static let error = Color(hex: "FF453A")
     
     // MARK: - 그라디언트
-    static let neonLime2 = Color(hex: "85FF6A")
+    static let neonLime2 = Color(hex: "E5FF66")
     
     static let limeGradient = LinearGradient(colors: [neonLime, neonLime2], startPoint: .leading, endPoint: .trailing)
     static let pinkGradient = LinearGradient(colors: [neonPink, neonOrange], startPoint: .leading, endPoint: .trailing)
@@ -67,12 +67,17 @@ enum DianaTheme {
     // MARK: - 카드 스타일
     static let cardCornerRadius: CGFloat = 16
     static let cardPadding: CGFloat = 20
+    static let cardBorder = Color(hex: "252525")
+    static let barInactive = Color(hex: "2A2A2A")
+
+    // MARK: - 타이포그래피
+    static let uppercaseTracking: CGFloat = 2.0
 }
 
 // MARK: - 카드 디자인 템플릿
 struct DianaCardModifier: ViewModifier {
-    var borderColor: Color
-    
+    var borderColor: Color = DianaTheme.cardBorder
+
     func body(content: Content) -> some View {
         content
             .padding(DianaTheme.cardPadding)
@@ -81,14 +86,14 @@ struct DianaCardModifier: ViewModifier {
                     .fill(DianaTheme.backgroundCard)
                     .overlay(
                         RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius)
-                            .stroke(borderColor, lineWidth: 0.2)
+                            .stroke(borderColor, lineWidth: 0.5)
                     )
             )
     }
 }
 
 extension View {
-    func dianaCard(_ color: Color) -> some View {
+    func dianaCard(_ color: Color = DianaTheme.cardBorder) -> some View {
         modifier(DianaCardModifier(borderColor: color))
     }
 }

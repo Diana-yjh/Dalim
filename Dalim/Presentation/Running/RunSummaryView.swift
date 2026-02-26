@@ -105,7 +105,7 @@ struct RunSummaryView: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: 60)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 페이스 차트
@@ -167,7 +167,7 @@ struct RunSummaryView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 하단 버튼

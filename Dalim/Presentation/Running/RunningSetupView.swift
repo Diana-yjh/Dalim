@@ -104,7 +104,7 @@ struct RunningSetupView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 목표 시간 설정
@@ -147,7 +147,7 @@ struct RunningSetupView: View {
             }
             .tint(DianaTheme.neonLime)
         }
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 목표 거리 설정
@@ -187,7 +187,7 @@ struct RunningSetupView: View {
             }
             .tint(DianaTheme.neonLime)
         }
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 시작 버튼

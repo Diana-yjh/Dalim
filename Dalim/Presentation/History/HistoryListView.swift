@@ -59,7 +59,7 @@ struct HistoryListView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dianaCard(DianaTheme.textTertiary)
+        .dianaCard()
     }
 
     // MARK: - 빈 상태
