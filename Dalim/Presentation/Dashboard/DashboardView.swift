@@ -47,6 +47,12 @@ struct DashboardView: View {
             .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .onAppear {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                appearance.shadowColor = .clear
+                UINavigationBar.appearance().standardAppearance = appearance
+            }
         }
     }
 }

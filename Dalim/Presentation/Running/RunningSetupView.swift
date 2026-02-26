@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RunningSetupView: View {
     @State private var viewModel = RunningSetupViewModel()
+    @State private var isRunning = false
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,9 @@ struct RunningSetupView: View {
             .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .fullScreenCover(isPresented: $isRunning) {
+                ActiveRunView()
+            }
         }
         .onAppear {
             viewModel.requestWeather()
@@ -189,7 +193,7 @@ struct RunningSetupView: View {
     // MARK: - 시작 버튼
     private var startButton: some View {
         Button {
-            // TODO: 러닝 시작 액션
+            isRunning = true
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "play.fill")
