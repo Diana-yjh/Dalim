@@ -13,12 +13,12 @@ enum DianaTheme {
     static let neonBlue = Color(hex: "08F0FF")
     static let neonPink = Color(hex: "FE2E78")
     static let neonOrange = Color(hex: "FF8800")
-    
+
     // MARK: - 배경
     static let backgroundPrimary = Color(hex: "0A0A0E")
     static let backgroundSecondary = Color(hex: "1E1E1E")
     static let backgroundCard = Color(hex: "14141F")
-    
+
     // MARK: - 텍스트
     static let textPrimary = Color.white
     static let textSecondary = Color(hex: "A0A0A0")

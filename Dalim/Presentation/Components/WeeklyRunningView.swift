@@ -18,7 +18,7 @@ struct WeeklyRunningView: View {
             
             weekCalendarSection
         }
-        .dianaCard(DianaTheme.backgroundPrimary)
+        .dianaCard(DianaTheme.textTertiary)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     

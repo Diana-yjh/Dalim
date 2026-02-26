@@ -17,7 +17,7 @@ struct MainTabView: View {
             }
             
             Tab("러닝", systemImage: "figure.run", value: 1) {
-                
+                RunningSetupView()
             }
             
             Tab("기록", systemImage: "list.star", value: 2) {

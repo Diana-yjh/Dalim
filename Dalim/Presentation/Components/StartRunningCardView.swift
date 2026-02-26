@@ -43,7 +43,7 @@ struct StartRunningCardView: View {
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dianaCard(DianaTheme.neonLime)
+        .dianaCard(DianaTheme.textTertiary)
     }
 }
 
