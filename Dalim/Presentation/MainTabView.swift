@@ -31,7 +31,8 @@ struct MainTabView: View {
         .tint(DianaTheme.neonLime)
         .onAppear {
             let appearance = UITabBarAppearance()
-            appearance.configureWithTransparentBackground()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(DianaTheme.backgroundPrimary)
             appearance.stackedLayoutAppearance.normal.iconColor = .white
             appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
             appearance.stackedLayoutAppearance.selected.iconColor = UIColor(DianaTheme.neonLime)
