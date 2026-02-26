@@ -21,6 +21,12 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     var routeCoordinates: [CLLocationCoordinate2D] = []
     var currentLocation: CLLocationCoordinate2D?
 
+    // MARK: - 요약 데이터
+    var pacePerKm: [Double] = []
+    var calories: Double = 0
+    var elevationGain: Double = 0
+    var cadence: Double = 0
+
     // MARK: - Private
     private let locationManager = CLLocationManager()
     private let healthStore = HKHealthStore()
@@ -28,6 +34,8 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     private var lastLocation: CLLocation?
     private var heartRateQuery: HKAnchoredObjectQuery?
     private var startDate = Date()
+    private var lastRecordedKm: Int = 0
+    private var lastKmTime: TimeInterval = 0
 
     // MARK: - Computed
     var elapsedTimeString: String {
@@ -55,6 +63,19 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     var heartRateString: String {
         guard heartRate > 0 else { return "--" }
         return "\(Int(heartRate))"
+    }
+
+    var caloriesString: String {
+        "\(Int(calories))"
+    }
+
+    var elevationGainString: String {
+        "\(Int(elevationGain))"
+    }
+
+    var cadenceString: String {
+        guard cadence > 0 else { return "--" }
+        return "\(Int(cadence))"
     }
 
     // MARK: - Init
@@ -91,10 +112,24 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     }
 
     func stopRun() {
+        runningStatus = .paused
         timer?.invalidate()
         timer = nil
         locationManager.stopUpdatingLocation()
         stopHeartRateQuery()
+
+        // 칼로리 계산 (체중 70kg 기준, 러닝 MET ≈ 9.8)
+        let met = 9.8
+        let weightKg = 70.0
+        let hours = elapsedTime / 3600.0
+        calories = met * weightKg * hours
+
+        // 케이던스 추정 (걸음수 ≈ 거리(m) / 0.8m, 분당)
+        let minutes = elapsedTime / 60.0
+        if minutes > 0 && distance > 0 {
+            let estimatedSteps = distance / 0.8
+            cadence = estimatedSteps / minutes
+        }
     }
 
     // MARK: - Timer
@@ -119,6 +154,21 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
 
             if delta > 0 {
                 currentPace = elapsedTime / (distance / 1000.0)
+            }
+
+            // 고도 상승 누적
+            let altitudeDelta = newLocation.altitude - last.altitude
+            if altitudeDelta > 0 {
+                elevationGain += altitudeDelta
+            }
+
+            // km 통과 시 구간 페이스 기록
+            let currentKm = Int(distance / 1000.0)
+            if currentKm > lastRecordedKm {
+                let segmentTime = elapsedTime - lastKmTime
+                pacePerKm.append(segmentTime)
+                lastKmTime = elapsedTime
+                lastRecordedKm = currentKm
             }
         }
 

@@ -10,6 +10,7 @@ import MapKit
 
 struct ActiveRunView: View {
     @State private var viewModel = ActiveRunViewModel()
+    @State private var showSummary = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -23,6 +24,11 @@ struct ActiveRunView: View {
         .background(DianaTheme.backgroundPrimary)
         .onAppear {
             viewModel.startRun()
+        }
+        .fullScreenCover(isPresented: $showSummary) {
+            RunSummaryView(viewModel: viewModel) {
+                dismiss()
+            }
         }
     }
 
@@ -137,7 +143,7 @@ struct ActiveRunView: View {
         HStack(spacing: 40) {
             Button {
                 viewModel.stopRun()
-                dismiss()
+                showSummary = true
             } label: {
                 Image(systemName: "stop.fill")
             }
