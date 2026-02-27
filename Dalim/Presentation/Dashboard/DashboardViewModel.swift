@@ -56,9 +56,28 @@ final class DashboardViewModel {
     private func loadProfile(modelContext: ModelContext) {
         let descriptor = FetchDescriptor<UserProfile>()
         if let profile = (try? modelContext.fetch(descriptor))?.first {
+            // SwiftData에 프로필이 있지만 연동 정보가 없는 경우, UserDefaults 캐시에서 복원
+            if !profile.isLinked, let cached = AuthService.cachedAuthResult() {
+                profile.name = cached.name
+                profile.isLinked = true
+                profile.authProvider = cached.provider
+                profile.authUserID = cached.userID
+                try? modelContext.save()
+            }
             userName = profile.name
             profileImageData = profile.profileImageData
             isLinked = profile.isLinked
+        } else if let cached = AuthService.cachedAuthResult() {
+            // SwiftData에 프로필이 없지만 UserDefaults에 캐시가 있는 경우 새 프로필 생성
+            let profile = UserProfile(name: cached.name)
+            profile.isLinked = true
+            profile.authProvider = cached.provider
+            profile.authUserID = cached.userID
+            modelContext.insert(profile)
+            try? modelContext.save()
+
+            userName = cached.name
+            isLinked = true
         }
     }
 
