@@ -20,6 +20,7 @@ struct WeeklyBarChartView: View {
                 barColumn(index: index)
             }
         }
+        .frame(minHeight: 60)
     }
 
     // MARK: - 바 열
@@ -32,6 +33,7 @@ struct WeeklyBarChartView: View {
         let isToday = index == todayIndex
 
         return VStack(spacing: 6) {
+            Spacer()
             if distance > 0 {
                 Text(String(format: "%.1f", distance))
                     .font(DianaTheme.captionEngFont(8))
@@ -53,7 +55,7 @@ struct WeeklyBarChartView: View {
 
 #Preview {
     WeeklyBarChartView(
-        dailyDistances: [5.2, 3.1, 7.0, 0, 4.5, 0, 2.0],
+        dailyDistances: [0.0, 0.0, 0.0, 0, 0.0, 0, 0.0],
         todayIndex: 2
     )
     .padding()

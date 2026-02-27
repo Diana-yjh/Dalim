@@ -17,32 +17,34 @@ struct ProfileHeaderView: View {
         HStack(spacing: 14) {
             profileImage
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("WELCOME BACK")
                     .font(DianaTheme.captionEngFont(11))
                     .foregroundStyle(DianaTheme.textSecondary)
                     .tracking(DianaTheme.uppercaseTracking)
-
-                Text(userName)
-                    .font(DianaTheme.subtitleFont(20))
-                    .foregroundStyle(DianaTheme.textPrimary)
-
-                if !isLinked {
-                    Button {
-                        onLinkAccount?()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("계정연동하기")
-                                .font(DianaTheme.captionEngFont(12))
-                                .tracking(DianaTheme.uppercaseTracking)
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 10, weight: .semibold))
+                
+                HStack(alignment: .lastTextBaseline) {
+                    Text(userName)
+                        .font(DianaTheme.subtitleFont(20))
+                        .foregroundStyle(DianaTheme.textPrimary)
+                    
+                    if !isLinked {
+                        Button {
+                            onLinkAccount?()
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("계정연동하기")
+                                    .font(DianaTheme.captionEngFont(12))
+                                    .tracking(DianaTheme.uppercaseTracking)
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 10, weight: .semibold))
+                            }
+                            .foregroundStyle(DianaTheme.neonLime)
                         }
-                        .foregroundStyle(DianaTheme.neonLime)
                     }
                 }
             }
-
+            
             Spacer()
         }
     }
@@ -62,7 +64,7 @@ struct ProfileHeaderView: View {
                     .foregroundStyle(DianaTheme.textTertiary)
             }
         }
-        .frame(width: 48, height: 48)
+        .frame(width: 50, height: 50)
         .clipShape(Circle())
     }
 }

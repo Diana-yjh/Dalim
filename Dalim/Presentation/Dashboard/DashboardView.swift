@@ -18,7 +18,7 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     ProfileHeaderView(
                         userName: viewModel.userName,
                         profileImageData: viewModel.profileImageData,

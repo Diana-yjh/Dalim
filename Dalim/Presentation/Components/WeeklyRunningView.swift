@@ -61,38 +61,20 @@ struct WeeklyRunningView: View {
                     Text("/ \(String(format: "%.0f", weeklyGoalKm))km")
                         .font(DianaTheme.captionEngFont())
                         .foregroundStyle(DianaTheme.textSecondary)
-                }
-
-                Button {
-                    goalInput = String(format: "%.0f", weeklyGoalKm)
-                    showGoalEditor = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "pencil")
-                        Text("목표 설정")
-                    }
-                    .font(DianaTheme.captionEngFont())
-                    .foregroundStyle(DianaTheme.neonLime)
+                        .onTapGesture {
+                            goalInput = String(format: "%.0f", weeklyGoalKm)
+                            showGoalEditor = true
+                        }
                 }
             }
 
             Spacer()
-
-            if isGoalSet {
-                CircularChartView(maxValue: weeklyGoalKm, nowValue: weeklyDistance, unit: "%", size: 70)
-            }
-        }
-    }
-    
-    private var isGoalSet: Bool {
-        if weeklyGoalKm > 0.0 { return true }
-        return false
-    }
-    
-    @ViewBuilder
-    private var goalStatusSection: some View {
-        if isGoalSet {
+            
             CircularChartView(maxValue: weeklyGoalKm, nowValue: weeklyDistance, unit: "%", size: 70)
+                .onTapGesture {
+                    goalInput = String(format: "%.0f", weeklyGoalKm)
+                    showGoalEditor = true
+                }
         }
     }
 }
