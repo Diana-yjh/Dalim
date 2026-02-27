@@ -55,7 +55,7 @@ struct WeeklyBarChartView: View {
 
 #Preview {
     WeeklyBarChartView(
-        dailyDistances: [0.0, 0.0, 0.0, 0, 0.0, 0, 0.0],
+        dailyDistances: [5.2, 3.1, 7.0, 0, 4.5, 0, 2.0],
         todayIndex: 2
     )
     .padding()
