@@ -135,7 +135,7 @@ struct MyPageView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .dianaCard(DianaTheme.neonLime)
+        .dianaCard()
         .onTapGesture {
             editedName = profile.name
             isEditingName = true
@@ -158,7 +158,7 @@ struct MyPageView: View {
             statItem(caption: "총 러닝", value: "\(totalRuns)", unit: "회")
             statItem(caption: "최장 거리", value: String(format: "%.1f", longestDistanceKm), unit: "km")
         }
-        .dianaCard(DianaTheme.neonLime)
+        .dianaCard()
     }
 
     private func statItem(caption: String, value: String, unit: String) -> some View {
@@ -186,17 +186,17 @@ struct MyPageView: View {
                 .padding(.bottom, 4)
 
             VStack(spacing: 0) {
-                settingsToggleRow(title: "Apple Health 연동", isOn: Binding(
+                settingsToggleRow(icon: "heart.fill", iconColor: DianaTheme.neonPink, title: "Apple Health 연동", isOn: Binding(
                     get: { settings.isHealthKitEnabled },
                     set: { settings.isHealthKitEnabled = $0 }
                 ))
                 Divider().background(DianaTheme.textTertiary)
-                settingsToggleRow(title: "알림", isOn: Binding(
+                settingsToggleRow(icon: "bell.fill", iconColor: DianaTheme.neonOrange, title: "알림", isOn: Binding(
                     get: { settings.isNotificationEnabled },
                     set: { settings.isNotificationEnabled = $0 }
                 ))
                 Divider().background(DianaTheme.textTertiary)
-                settingsToggleRow(title: "음성 알림", isOn: Binding(
+                settingsToggleRow(icon: "speaker.wave.2.fill", iconColor: DianaTheme.neonBlue, title: "음성 알림", isOn: Binding(
                     get: { settings.isVoiceAlertEnabled },
                     set: { settings.isVoiceAlertEnabled = $0 }
                 ))
@@ -204,22 +204,36 @@ struct MyPageView: View {
                 distanceUnitRow
             }
         }
-        .dianaCard(DianaTheme.neonLime)
+        .dianaCard()
     }
 
-    private func settingsToggleRow(title: String, isOn: Binding<Bool>) -> some View {
-        Toggle(title, isOn: isOn)
-            .font(DianaTheme.bodyFont())
-            .foregroundStyle(DianaTheme.textPrimary)
-            .tint(DianaTheme.neonLime)
-            .padding(.vertical, 8)
+    private func settingsToggleRow(icon: String, iconColor: Color, title: String, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 14))
+                    .foregroundStyle(iconColor)
+                    .frame(width: 20)
+                Text(title)
+                    .font(DianaTheme.bodyFont())
+                    .foregroundStyle(DianaTheme.textPrimary)
+            }
+        }
+        .tint(DianaTheme.neonLime)
+        .padding(.vertical, 8)
     }
 
     private var distanceUnitRow: some View {
         HStack {
-            Text("거리 단위")
-                .font(DianaTheme.bodyFont())
-                .foregroundStyle(DianaTheme.textPrimary)
+            HStack(spacing: 10) {
+                Image(systemName: "ruler")
+                    .font(.system(size: 14))
+                    .foregroundStyle(DianaTheme.neonLime)
+                    .frame(width: 20)
+                Text("거리 단위")
+                    .font(DianaTheme.bodyFont())
+                    .foregroundStyle(DianaTheme.textPrimary)
+            }
 
             Spacer()
 
