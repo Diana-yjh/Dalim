@@ -13,6 +13,10 @@ struct WeeklyRunningView: View {
     let todayIndex: Int
     let recordExistsFlags: [Bool]
     var dailyDistances: [Double] = Array(repeating: 0, count: 7)
+    var onGoalChange: ((Double) -> Void)?
+
+    @State private var showGoalEditor = false
+    @State private var goalInput = ""
 
     var body: some View {
         VStack(spacing: 20) {
@@ -25,6 +29,18 @@ struct WeeklyRunningView: View {
         }
         .dianaCard()
         .frame(maxWidth: .infinity, alignment: .leading)
+        .alert("주간 목표 설정", isPresented: $showGoalEditor) {
+            TextField("목표 거리 (km)", text: $goalInput)
+                .keyboardType(.decimalPad)
+            Button("저장") {
+                if let km = Double(goalInput), km > 0 {
+                    onGoalChange?(km)
+                }
+            }
+            Button("취소", role: .cancel) {}
+        } message: {
+            Text("주간 목표 거리를 km 단위로 입력하세요")
+        }
     }
 
     // MARK: - 주간 목표
@@ -46,10 +62,36 @@ struct WeeklyRunningView: View {
                         .font(DianaTheme.captionEngFont())
                         .foregroundStyle(DianaTheme.textSecondary)
                 }
+
+                Button {
+                    goalInput = String(format: "%.0f", weeklyGoalKm)
+                    showGoalEditor = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "pencil")
+                        Text("목표 설정")
+                    }
+                    .font(DianaTheme.captionEngFont())
+                    .foregroundStyle(DianaTheme.neonLime)
+                }
             }
 
             Spacer()
 
+            if isGoalSet {
+                CircularChartView(maxValue: weeklyGoalKm, nowValue: weeklyDistance, unit: "%", size: 70)
+            }
+        }
+    }
+    
+    private var isGoalSet: Bool {
+        if weeklyGoalKm > 0.0 { return true }
+        return false
+    }
+    
+    @ViewBuilder
+    private var goalStatusSection: some View {
+        if isGoalSet {
             CircularChartView(maxValue: weeklyGoalKm, nowValue: weeklyDistance, unit: "%", size: 70)
         }
     }

@@ -249,6 +249,20 @@ final class DashboardViewModel {
         weatherSummary = info.summary
     }
 
+    // MARK: - 주간 목표 변경
+
+    func updateWeeklyGoal(km: Double, modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<UserSettings>()
+        let settings = (try? modelContext.fetch(descriptor))?.first ?? {
+            let s = UserSettings()
+            modelContext.insert(s)
+            return s
+        }()
+        settings.weeklyGoalKm = km
+        try? modelContext.save()
+        weeklyGoalKm = km
+    }
+
     // MARK: - 달성률
 
     var achievementRate: Double {

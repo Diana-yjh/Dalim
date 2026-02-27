@@ -31,7 +31,10 @@ struct DashboardView: View {
                         weeklyGoalKm: viewModel.weeklyGoalKm,
                         todayIndex: viewModel.todayIndex,
                         recordExistsFlags: viewModel.recordExistsFlags,
-                        dailyDistances: viewModel.dailyDistances
+                        dailyDistances: viewModel.dailyDistances,
+                        onGoalChange: { km in
+                            viewModel.updateWeeklyGoal(km: km, modelContext: modelContext)
+                        }
                     )
 
                     StartRunningCardView(
