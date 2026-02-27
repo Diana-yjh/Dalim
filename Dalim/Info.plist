@@ -31,5 +31,7 @@
 	<string>러닝 경로를 기록하고 실시간 위치를 표시하기 위해 위치 정보가 필요합니다.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>러닝 중 심박수를 실시간으로 표시하기 위해 건강 데이터 접근이 필요합니다.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>러닝 기록을 건강 앱에 저장하기 위해 건강 데이터 쓰기 권한이 필요합니다.</string>
 </dict>
 </plist>
