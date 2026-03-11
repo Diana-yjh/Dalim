@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import CoreLocation
+import UIKit
 
 @Observable
-final class RunningSetupViewModel {
+final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
     // MARK: - 모드 설정
     var selectedMode: RunningMode = .free
 
@@ -28,11 +30,52 @@ final class RunningSetupViewModel {
 
     private let weatherService = WeatherService()
 
+    // MARK: - 위치 권한
+    var showPermissionAlert: Bool = false
+    private let locationManager = CLLocationManager()
+
+    override init() {
+        super.init()
+        locationManager.delegate = self
+    }
+
+    /// 위치 권한 상태 확인 — 거부/제한 시 커스텀 알럿 표시
+    func checkLocationPermission() {
+        switch locationManager.authorizationStatus {
+        case .denied, .restricted:
+            showPermissionAlert = true
+        default:
+            break
+        }
+    }
+
+    /// 설정 앱으로 이동
+    func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            showPermissionAlert = false
+            Task { await requestWeather() }
+        case .denied, .restricted:
+            showPermissionAlert = true
+        default:
+            break
+        }
+    }
+
     // MARK: - 날씨 요청
     func requestWeather() async {
-        let info = await weatherService.fetchWeather()
-        currentTemperature = "체감 \(info.temperature)"
-        weatherCondition = "\(info.condition) · \(info.runningSuitability)"
-        weatherIcon = info.icon
+        do {
+            let info = try await weatherService.fetchWeather()
+            currentTemperature = "체감 \(info.temperature)"
+            weatherCondition = "\(info.condition) · \(info.runningSuitability)"
+            weatherIcon = info.icon
+        } catch {
+            weatherCondition = "날씨 정보 없음"
+        }
     }
 }

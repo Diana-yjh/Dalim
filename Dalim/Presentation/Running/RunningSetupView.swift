@@ -32,7 +32,18 @@ struct RunningSetupView: View {
             }
         }
         .task {
+            viewModel.checkLocationPermission()
             await viewModel.requestWeather()
+        }
+        .fullScreenCover(isPresented: $viewModel.showPermissionAlert) {
+            LocationPermissionView(
+                onOpenSettings: {
+                    viewModel.openAppSettings()
+                },
+                onDismiss: {
+                    viewModel.showPermissionAlert = false
+                }
+            )
         }
     }
 

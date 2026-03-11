@@ -95,6 +95,7 @@ final class DashboardViewModel {
         do {
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
         } catch {
+            print("HealthKit auth failed: \(error)")
             return
         }
 
@@ -118,7 +119,7 @@ final class DashboardViewModel {
             currentBPM = "\(Int(bpm))"
         }
     }
-
+    
     private func fetchSum(type: HKQuantityType, predicate: NSPredicate, unit: HKUnit) async throws -> Double {
         try await withCheckedThrowingContinuation { continuation in
             let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
@@ -131,7 +132,7 @@ final class DashboardViewModel {
             healthStore.execute(query)
         }
     }
-
+    
     private func fetchLatestHeartRate() async throws -> Double {
         let heartRateType = HKQuantityType(.heartRate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
@@ -264,8 +265,13 @@ final class DashboardViewModel {
     // MARK: - 날씨 로딩
 
     private func loadWeather() async {
-        let info = await weatherService.fetchWeather()
-        weatherSummary = info.summary
+        do {
+            let info = try await weatherService.fetchWeather()
+            
+            weatherSummary = info.summary
+        } catch {
+            weatherSummary = "날씨 정보 없음"
+        }
     }
 
     // MARK: - 주간 목표 변경
