@@ -16,7 +16,6 @@ struct WeeklyRunningView: View {
     var onGoalChange: ((Double) -> Void)?
 
     @State private var showGoalEditor = false
-    @State private var goalInput = ""
 
     var body: some View {
         VStack(spacing: 20) {
@@ -29,17 +28,12 @@ struct WeeklyRunningView: View {
         }
         .dianaCard()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .alert("주간 목표 설정", isPresented: $showGoalEditor) {
-            TextField("목표 거리 (km)", text: $goalInput)
-                .keyboardType(.decimalPad)
-            Button("저장") {
-                if let km = Double(goalInput), km > 0 {
-                    onGoalChange?(km)
-                }
+        .sheet(isPresented: $showGoalEditor) {
+            GoalEditSheet(currentGoalKm: weeklyGoalKm) { newGoal in
+                onGoalChange?(newGoal)
             }
-            Button("취소", role: .cancel) {}
-        } message: {
-            Text("주간 목표 거리를 km 단위로 입력하세요")
+            .presentationDetents([.height(400)])
+            .presentationDragIndicator(.visible)
         }
     }
 
@@ -62,7 +56,6 @@ struct WeeklyRunningView: View {
                         .font(DianaTheme.captionEngFont())
                         .foregroundStyle(DianaTheme.textSecondary)
                         .onTapGesture {
-                            goalInput = String(format: "%.0f", weeklyGoalKm)
                             showGoalEditor = true
                         }
                 }
@@ -72,7 +65,6 @@ struct WeeklyRunningView: View {
             
             CircularChartView(maxValue: weeklyGoalKm, nowValue: weeklyDistance, unit: "%", size: 70)
                 .onTapGesture {
-                    goalInput = String(format: "%.0f", weeklyGoalKm)
                     showGoalEditor = true
                 }
         }
