@@ -65,8 +65,9 @@ struct GoalEditSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(DianaTheme.backgroundCard)
+        .ignoresSafeArea()
     }
 }
 
