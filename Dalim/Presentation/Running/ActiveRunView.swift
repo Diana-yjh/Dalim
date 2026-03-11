@@ -30,6 +30,11 @@ struct ActiveRunView: View {
                 dismiss()
             }
         }
+        .overlay {
+            if viewModel.showHealthKitAlert {
+                healthKitAlertOverlay
+            }
+        }
     }
 
     // MARK: - 지도 영역
@@ -62,14 +67,14 @@ struct ActiveRunView: View {
     // MARK: - 타이머 (중앙 강조)
     private var distanceSection: some View {
         VStack(spacing: 4) {
-            Text(viewModel.elapsedTimeString)
-                .font(DianaTheme.statFont(56))
-                .foregroundStyle(DianaTheme.textPrimary)
-
             Text("TIME")
                 .font(DianaTheme.captionEngFont(13))
                 .foregroundStyle(DianaTheme.textSecondary)
                 .tracking(DianaTheme.uppercaseTracking)
+            
+            Text(viewModel.elapsedTimeString)
+                .font(DianaTheme.statFont(56))
+                .foregroundStyle(DianaTheme.textPrimary)
         }
         .padding(.top, 16)
     }
@@ -114,6 +119,94 @@ struct ActiveRunView: View {
         Rectangle()
             .fill(DianaTheme.textTertiary.opacity(0.4))
             .frame(width: 0.5, height: 30)
+    }
+
+    // MARK: - HealthKit 권한 알림
+
+    @State private var neverAskChecked = false
+
+    private var healthKitAlertOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.6)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    dismissHealthKitAlert()
+                }
+
+            VStack(spacing: 16) {
+                // 아이콘 + 타이틀
+                Image(systemName: "heart.text.clipboard")
+                    .font(.system(size: 36))
+                    .foregroundStyle(DianaTheme.neonPink)
+
+                Text("건강 데이터 접근 필요")
+                    .font(DianaTheme.subtitleFont(18))
+                    .foregroundStyle(DianaTheme.textPrimary)
+
+                Text("심박수 등 건강 데이터를 사용하려면\n설정에서 건강 데이터 접근을 허용해주세요.\n\n설정 > 건강 > 데이터 접근 및 기기에서\nDalim 앱의 접근 권한을 변경할 수 있습니다.")
+                    .font(DianaTheme.captionKorFont(13))
+                    .foregroundStyle(DianaTheme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+
+                // 다시 묻지 않기 체크박스
+                Button {
+                    neverAskChecked.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: neverAskChecked ? "checkmark.square.fill" : "square")
+                            .font(.system(size: 18))
+                            .foregroundStyle(neverAskChecked ? DianaTheme.neonLime : DianaTheme.textTertiary)
+
+                        Text("다시 묻지 않기")
+                            .font(DianaTheme.captionKorFont(13))
+                            .foregroundStyle(DianaTheme.textTertiary)
+                    }
+                }
+
+                // 확인 / 취소 버튼
+                HStack(spacing: 10) {
+                    Button {
+                        dismissHealthKitAlert()
+                    } label: {
+                        Text("취소")
+                            .font(DianaTheme.bodyFont())
+                            .foregroundStyle(DianaTheme.textSecondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(DianaTheme.textTertiary.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+
+                    Button {
+                        dismissHealthKitAlert()
+                        viewModel.openAppSettings()
+                    } label: {
+                        Text("설정으로 이동")
+                            .font(DianaTheme.bodyFont())
+                            .foregroundStyle(DianaTheme.backgroundPrimary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(DianaTheme.neonLime)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+            }
+            .padding(24)
+            .background(DianaTheme.backgroundSecondary)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal, 36)
+        }
+        .transition(.opacity)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.showHealthKitAlert)
+    }
+
+    private func dismissHealthKitAlert() {
+        if neverAskChecked {
+            viewModel.setNeverAskHealthKit()
+        }
+        viewModel.showHealthKitAlert = false
+        neverAskChecked = false
     }
 
     // MARK: - 제어 버튼

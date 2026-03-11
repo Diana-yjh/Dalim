@@ -9,6 +9,7 @@ import Foundation
 import CoreLocation
 import HealthKit
 import MapKit
+import UIKit
 
 @Observable
 final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
@@ -20,6 +21,9 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     var heartRate: Double = 0
     var routeCoordinates: [CLLocationCoordinate2D] = []
     var currentLocation: CLLocationCoordinate2D?
+
+    // MARK: - HealthKit 권한 알림
+    var showHealthKitAlert = false
 
     // MARK: - 요약 데이터
     var pacePerKm: [Double] = []
@@ -36,6 +40,8 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     private var startDate = Date()
     private var lastRecordedKm: Int = 0
     private var lastKmTime: TimeInterval = 0
+
+    private static let healthKitNeverAskKey = "healthkit_never_ask_again"
 
     // MARK: - Computed
     var elapsedTimeString: String {
@@ -95,7 +101,34 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         startTimer()
-        startHeartRateQuery()
+        checkHealthKitPermission()
+    }
+
+    // MARK: - HealthKit 권한 확인
+
+    private func checkHealthKitPermission() {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+
+        let neverAsk = UserDefaults.standard.bool(forKey: Self.healthKitNeverAskKey)
+        guard !neverAsk else { return }
+
+        let heartRateType = HKQuantityType(.heartRate)
+        let status = healthStore.authorizationStatus(for: heartRateType)
+
+        if status == .sharingDenied || status == .notDetermined {
+            startHeartRateQuery()
+        }
+    }
+
+    /// "다시 묻지 않기" 설정
+    func setNeverAskHealthKit() {
+        UserDefaults.standard.set(true, forKey: Self.healthKitNeverAskKey)
+    }
+
+    /// 설정 앱으로 이동
+    func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 
     func pauseRun() {
@@ -181,7 +214,10 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
 
     // MARK: - HealthKit 심박수
     private func startHeartRateQuery() {
-        guard HKHealthStore.isHealthDataAvailable() else { return }
+        guard HKHealthStore.isHealthDataAvailable() else {
+            print("Error: This Device does not support HealthKit")
+            return
+        }
 
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
         let readTypes: Set<HKObjectType> = [heartRateType]
