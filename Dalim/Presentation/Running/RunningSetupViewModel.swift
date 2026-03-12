@@ -7,7 +7,12 @@
 
 import Foundation
 import CoreLocation
+import UserNotifications
 import UIKit
+
+enum NotificationError: Error {
+    case permissionDenied
+}
 
 @Observable
 final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
@@ -31,7 +36,9 @@ final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
     private let weatherService = WeatherService()
 
     // MARK: - 위치 권한
-    var showPermissionAlert: Bool = false
+    var showLocationPermissionAlert: Bool = false
+    var showAlarmPermissionAlert: Bool = false
+    
     private let locationManager = CLLocationManager()
 
     override init() {
@@ -43,7 +50,7 @@ final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
     func checkLocationPermission() {
         switch locationManager.authorizationStatus {
         case .denied, .restricted:
-            showPermissionAlert = true
+            showLocationPermissionAlert = true
         default:
             break
         }
@@ -58,10 +65,10 @@ final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
-            showPermissionAlert = false
+            showLocationPermissionAlert = false
             Task { await requestWeather() }
         case .denied, .restricted:
-            showPermissionAlert = true
+            showLocationPermissionAlert = true
         default:
             break
         }
@@ -77,5 +84,42 @@ final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
         } catch {
             weatherCondition = "날씨 정보 없음"
         }
+    }
+    
+    // MARK: - 알림 권한 설정
+    func requestNoficiationPermission() async {
+        var granted: Bool = false
+        
+        do {
+            granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+        } catch {
+            showAlarmPermissionAlert = true
+        }
+        
+        if !granted {
+            showAlarmPermissionAlert = true
+        }
+    }
+    
+    func scheduleDaily() {
+        let content = UNMutableNotificationContent()
+        content.title = "달림"
+        content.body = "오늘도 달려볼까요?"
+        content.sound = .default
+        
+        var dateComponent = DateComponents()
+        dateComponent.hour = targetHours
+        dateComponent.minute = targetMinutes
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: true)
+        let request = UNNotificationRequest(identifier: "dailyRun", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request)
+    }
+    
+    func cancelNotification(id: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
+        
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }

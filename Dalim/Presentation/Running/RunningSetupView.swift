@@ -33,15 +33,16 @@ struct RunningSetupView: View {
         }
         .task {
             viewModel.checkLocationPermission()
+            await viewModel.requestNoficiationPermission()
             await viewModel.requestWeather()
         }
-        .fullScreenCover(isPresented: $viewModel.showPermissionAlert) {
+        .fullScreenCover(isPresented: $viewModel.showLocationPermissionAlert) {
             LocationPermissionView(
                 onOpenSettings: {
                     viewModel.openAppSettings()
                 },
                 onDismiss: {
-                    viewModel.showPermissionAlert = false
+                    viewModel.showLocationPermissionAlert = false
                 }
             )
         }
@@ -71,7 +72,7 @@ struct RunningSetupView: View {
                     .padding(.vertical, 16)
                     .background(
                         RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius)
-                            .fill(Color.clear)
+                            .fill(isSelected ? DianaTheme.neonLime.opacity(0.1) : .clear)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: DianaTheme.cardCornerRadius)
@@ -143,6 +144,9 @@ struct RunningSetupView: View {
                 .frame(maxWidth: .infinity)
             }
             .frame(height: 120)
+            .onChange(of: viewModel.isAlarmEnabled) { oldValue, newValue in
+                viewModel.scheduleDaily()
+            }
 
             Divider()
                 .overlay(DianaTheme.textTertiary)

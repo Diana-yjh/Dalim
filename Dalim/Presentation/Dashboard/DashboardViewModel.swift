@@ -267,7 +267,6 @@ final class DashboardViewModel {
     private func loadWeather() async {
         do {
             let info = try await weatherService.fetchWeather()
-            
             weatherSummary = info.summary
         } catch {
             weatherSummary = "날씨 정보 없음"
