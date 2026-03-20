@@ -60,7 +60,12 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     private let urlPrefix = "https://api.openweathermap.org/data/2.5/air_pollution?"
     private let urlLatitude = "lat="
     private let urlLongitude = "&lon="
-    private let apiKey = ""
+    private let apiKey: String = {
+        guard let key = Bundle.main.infoDictionary?["OPENWEATHER_API_KEY"] as? String, !key.isEmpty else {
+            fatalError("OPENWEATHER_API_KEY가 Info.plist에 설정되지 않았습니다. Secrets.xcconfig를 확인하세요.")
+        }
+        return key
+    }()
     
     override init() {
         super.init()

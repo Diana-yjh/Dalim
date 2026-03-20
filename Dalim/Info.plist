@@ -25,6 +25,8 @@
 		<string>SpaceMono-Italic.ttf</string>
 		<string>SpaceMono-Regular.ttf</string>
 	</array>
+	<key>OPENWEATHER_API_KEY</key>
+	<string>$(OPENWEATHER_API_KEY)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>러닝 경로를 기록하고 실시간 위치를 표시하기 위해 위치 정보가 필요합니다.</string>
 	<key>NSHealthShareUsageDescription</key>

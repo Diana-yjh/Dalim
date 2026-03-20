@@ -52,7 +52,8 @@ struct DashboardView: View {
                         feelsLike: viewModel.feelsLike,
                         wind: viewModel.wind,
                         airQuality: viewModel.airQuality,
-                        suitability: viewModel.suitability
+                        suitability: viewModel.suitability,
+                        isLocationDenied: viewModel.isLocationDenied
                     )
                     
                     HStack(spacing: 8) {

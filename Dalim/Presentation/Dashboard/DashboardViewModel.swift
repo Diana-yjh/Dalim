@@ -44,6 +44,7 @@ final class DashboardViewModel {
     var wind: String = ""
     var airQuality: String = ""
     var suitability: Suitability = .none
+    var isLocationDenied: Bool = false
     
     private let weatherService = WeatherService()
     private let healthStore = HKHealthStore()
@@ -278,9 +279,13 @@ final class DashboardViewModel {
             feelsLike = info.feelsLike
             wind = info.wind
             airQuality = info.airQuality
-            
+
             suitability = info.suitability
             weatherSummary = info.summary
+            isLocationDenied = false
+        } catch is LocationError {
+            isLocationDenied = true
+            weatherSummary = "위치 권한이 필요합니다"
         } catch {
             weatherSummary = "날씨 정보 없음"
         }

@@ -16,7 +16,8 @@ struct WeatherCardView: View {
     let wind: String
     let airQuality: String
     let suitability: Suitability
-    
+    var isLocationDenied: Bool = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .lastTextBaseline) {
@@ -55,6 +56,44 @@ struct WeatherCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .dianaCard()
+        .overlay {
+            if isLocationDenied {
+                locationDeniedOverlay
+            }
+        }
+    }
+
+    // MARK: - 위치 권한 거부 오버레이
+
+    private var locationDeniedOverlay: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .fill(DianaTheme.backgroundSecondary.opacity(0.95))
+            .overlay {
+                VStack(spacing: 12) {
+                    Image(systemName: "location.slash.fill")
+                        .font(.system(size: 28))
+                        .foregroundStyle(DianaTheme.neonLime)
+
+                    Text("날씨 정보를 확인하려면\n위치 권한이 필요합니다")
+                        .font(DianaTheme.captionKorFont())
+                        .foregroundStyle(DianaTheme.textSecondary)
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Text("설정에서 허용하기")
+                            .font(DianaTheme.captionKorFont())
+                            .foregroundStyle(DianaTheme.backgroundPrimary)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(DianaTheme.neonLime)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
     }
     
     private func weatherStatItemView(caption: String, stat: String, unit: String) -> some View {
