@@ -78,8 +78,8 @@ final class RunningSetupViewModel: NSObject, CLLocationManagerDelegate {
     func requestWeather() async {
         do {
             let info = try await weatherService.fetchWeather()
-            currentTemperature = "체감 \(info.temperature)"
-            weatherCondition = "\(info.condition) · \(info.runningSuitability)"
+            currentTemperature = "체감 \(info.temperature)°C"
+            weatherCondition = "\(info.condition)"
             weatherIcon = info.icon
         } catch {
             weatherCondition = "날씨 정보 없음"

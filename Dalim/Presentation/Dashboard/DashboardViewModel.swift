@@ -38,7 +38,13 @@ final class DashboardViewModel {
 
     // MARK: - 날씨
     var weatherSummary: String = "날씨 정보 로딩 중..."
-
+    var temperature: String = ""
+    var humidity: String = ""
+    var feelsLike: String = ""
+    var wind: String = ""
+    var airQuality: String = ""
+    var suitability: Suitability = .none
+    
     private let weatherService = WeatherService()
     private let healthStore = HKHealthStore()
 
@@ -267,6 +273,13 @@ final class DashboardViewModel {
     private func loadWeather() async {
         do {
             let info = try await weatherService.fetchWeather()
+            temperature = info.temperature
+            humidity = info.humidity
+            feelsLike = info.feelsLike
+            wind = info.wind
+            airQuality = info.airQuality
+            
+            suitability = info.suitability
             weatherSummary = info.summary
         } catch {
             weatherSummary = "날씨 정보 없음"

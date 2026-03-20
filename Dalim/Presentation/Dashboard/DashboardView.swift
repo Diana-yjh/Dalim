@@ -40,10 +40,21 @@ struct DashboardView: View {
                     StartRunningCardView(
                         headerCaption: "READY TO RUN?",
                         actionTitle: "러닝 시작하기 🏃",
-                        weatherSummary: viewModel.weatherSummary,
+                        weatherSummary: viewModel.suitability.description,
                         selectedTab: $selectedTab
                     )
 
+                    WeatherCardView(
+                        headerCaption: "RUNNING CONDITIONS",
+                        temperature: viewModel.temperature,
+                        weatherSummary: viewModel.weatherSummary,
+                        humidity: viewModel.humidity,
+                        feelsLike: viewModel.feelsLike,
+                        wind: viewModel.wind,
+                        airQuality: viewModel.airQuality,
+                        suitability: viewModel.suitability
+                    )
+                    
                     HStack(spacing: 8) {
                         StatCardView(
                             caption: "AVG PACE",

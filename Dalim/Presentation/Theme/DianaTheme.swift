@@ -11,6 +11,7 @@ enum DianaTheme {
     // MARK: - 메인 컬러
     static let neonLime = Color(hex: "CCFF00")
     static let neonBlue = Color(hex: "08F0FF")
+    static let neonYellow = Color(hex: "FFD700")
     static let neonPink = Color(hex: "FE2E78")
     static let neonOrange = Color(hex: "FF8800")
 
