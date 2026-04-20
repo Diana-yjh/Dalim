@@ -57,7 +57,7 @@ extension RunRecord {
     var paceString: String {
         let minutes = Int(averagePace) / 60
         let seconds = Int(averagePace) % 60
-        return "\(minutes)'\(String(format: "%02d", seconds))\""
+        return "\(minutes):\(String(format: "%02d", seconds))"
     }
     
     // 시간 문자열

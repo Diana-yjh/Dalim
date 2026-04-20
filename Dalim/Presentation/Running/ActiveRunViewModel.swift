@@ -60,10 +60,10 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     }
 
     var paceString: String {
-        guard currentPace > 0 else { return "--'--\"" }
+        guard currentPace > 0 else { return "--:--" }
         let minutes = Int(currentPace) / 60
         let seconds = Int(currentPace) % 60
-        return "\(minutes)'\(String(format: "%02d", seconds))\""
+        return "\(minutes):\(String(format: "%02d", seconds))"
     }
 
     var heartRateString: String {

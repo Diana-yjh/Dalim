@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 import Observation
 import HealthKit
 
@@ -30,7 +31,7 @@ final class DashboardViewModel {
     var dailyDistances: [Double] = Array(repeating: 0, count: 7)
 
     // MARK: - 통계
-    var averagePaceString: String = "--'--\""
+    var averagePaceString: String = "--:--"
     var paceChangeText: String = ""
     var paceChangeColor: String = "lime"
     var totalRuns: Int = 0
@@ -215,7 +216,7 @@ final class DashboardViewModel {
             let avgPace = records.reduce(0.0) { $0 + $1.averagePace } / Double(records.count)
             let minutes = Int(avgPace) / 60
             let seconds = Int(avgPace) % 60
-            averagePaceString = "\(minutes)'\(String(format: "%02d", seconds))\""
+            averagePaceString = "\(minutes):\(String(format: "%02d", seconds))"
 
             // 페이스 변화: 이번 주 vs 지난 주
             let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: weekInterval.start)!
@@ -231,10 +232,10 @@ final class DashboardViewModel {
                 let diffSec = Int(abs(diff)) % 60
 
                 if diff > 0 {
-                    paceChangeText = "▲ \(diffMin)'\(String(format: "%02d", diffSec))\" 상승"
+                    paceChangeText = "▲ \(diffMin):\(String(format: "%02d", diffSec)) 상승"
                     paceChangeColor = "lime"
                 } else if diff < 0 {
-                    paceChangeText = "▼ \(diffMin)'\(String(format: "%02d", diffSec))\" 하락"
+                    paceChangeText = "▼ \(diffMin):\(String(format: "%02d", diffSec)) 하락"
                     paceChangeColor = "orange"
                 } else {
                     paceChangeText = "변동 없음"
@@ -316,5 +317,3 @@ final class DashboardViewModel {
         paceChangeColor == "lime" ? DianaTheme.neonLime : DianaTheme.neonOrange
     }
 }
-
-import SwiftUI

@@ -142,7 +142,7 @@ struct RunSummaryView: View {
                     AxisMarks(position: .leading) { value in
                         AxisValueLabel {
                             if let mins = value.as(Double.self) {
-                                Text(String(format: "%d'%02d\"", Int(mins), Int(mins.truncatingRemainder(dividingBy: 1) * 60)))
+                                Text(String(format: "%d:%02d", Int(mins), Int(mins.truncatingRemainder(dividingBy: 1) * 60)))
                                     .font(DianaTheme.captionEngFont(10))
                                     .foregroundStyle(DianaTheme.textSecondary)
                             }

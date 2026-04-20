@@ -45,9 +45,9 @@ struct StatCardView: View {
     HStack(spacing: 8) {
         StatCardView(
             caption: "AVG PACE",
-            value: "5'42\"",
+            value: "5:42",
             unit: "km",
-            alert: "▲ 0'12\" 상승",
+            alert: "▲ 0:12 상승",
             alertColor: DianaTheme.neonLime
         )
         StatCardView(
