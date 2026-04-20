@@ -16,6 +16,10 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     // MARK: - 러닝 상태
     var runningStatus: RunningStatus = .running
     var elapsedTime: TimeInterval = 0
+    
+    private var pausedElapsedTime: TimeInterval = 0
+    private var resumeDate: Date = Date()
+    
     var distance: Double = 0
     var currentPace: Double = 0
     var heartRate: Double = 0
@@ -132,6 +136,7 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     }
 
     func pauseRun() {
+        pausedElapsedTime = elapsedTime
         runningStatus = .paused
         timer?.invalidate()
         timer = nil
@@ -139,6 +144,7 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     }
 
     func resumeRun() {
+        resumeDate = Date()
         runningStatus = .running
         locationManager.startUpdatingLocation()
         startTimer()
@@ -167,20 +173,26 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
 
     // MARK: - Timer
     private func startTimer() {
+        resumeDate = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }
-            self.elapsedTime += 1
+            self.elapsedTime = self.pausedElapsedTime + Date().timeIntervalSince(resumeDate)
         }
     }
 
     // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let newLocation = locations.last else { return }
-
+        
+        guard newLocation.horizontalAccuracy >= 0, newLocation.horizontalAccuracy <= 20 else {
+            return
+        }
+        
         let coordinate = newLocation.coordinate
         currentLocation = coordinate
+        
         routeCoordinates.append(coordinate)
-
+        
         if let last = lastLocation {
             let delta = newLocation.distance(from: last)
             distance += delta
