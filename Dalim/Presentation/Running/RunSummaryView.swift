@@ -63,7 +63,8 @@ struct RunSummaryView: View {
         Map {
             if !viewModel.routeCoordinates.isEmpty {
                 MapPolyline(coordinates: viewModel.routeCoordinates)
-                    .stroke(DianaTheme.neonLime, lineWidth: 4)
+                    .stroke(DianaTheme.neonOrange
+                            , lineWidth: 4)
             }
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
@@ -235,4 +236,33 @@ struct RunSummaryView: View {
 
         modelContext.insert(record)
     }
+}
+
+extension ActiveRunViewModel {
+    static var preview: ActiveRunViewModel {
+        let vm = ActiveRunViewModel()
+        vm.distance = 5.23
+        vm.elapsedTime = 1830  // 30:30
+        vm.currentPace = 350   // 5:50/km
+        vm.heartRate = 152
+        vm.calories = 420
+        vm.elevationGain = 45
+        vm.cadence = 172
+        vm.pacePerKm = [360, 355, 340, 350, 345]
+        vm.routeCoordinates = [
+            .init(latitude: 37.2636, longitude: 127.0286),
+            .init(latitude: 37.2640, longitude: 127.0290),
+            .init(latitude: 37.2645, longitude: 127.0295),
+            .init(latitude: 37.2650, longitude: 127.0300)
+        ]
+        return vm
+    }
+}
+
+#Preview("완료 화면") {
+    RunSummaryView(
+        viewModel: .preview,
+        onDismiss: {}
+    )
+    .modelContainer(for: [RunRecord.self, RoutePoint.self], inMemory: true)
 }

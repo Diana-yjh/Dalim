@@ -11,6 +11,7 @@ import MapKit
 struct ActiveRunView: View {
     @State private var viewModel = ActiveRunViewModel()
     @State private var showSummary = false
+    @State private var cameraPosition: MapCameraPosition = .automatic
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -39,29 +40,39 @@ struct ActiveRunView: View {
 
     // MARK: - 지도 영역
     private var mapSection: some View {
-        Map {
+        Map(position: $cameraPosition) {
             if !viewModel.routeCoordinates.isEmpty {
                 MapPolyline(coordinates: viewModel.routeCoordinates)
-                    .stroke(DianaTheme.neonLime, lineWidth: 4)
+                    .stroke(DianaTheme.neonOrange, lineWidth: 4)
             }
 
             if let current = viewModel.currentLocation {
                 Annotation("", coordinate: current) {
                     Circle()
-                        .fill(DianaTheme.neonBlue)
-                        .frame(width: 14, height: 14)
+                        .fill(DianaTheme.neonOrange)
+                        .frame(width: 20, height: 20)
                         .overlay(
                             Circle()
-                                .stroke(Color.white, lineWidth: 2)
+                                .stroke(Color.white, lineWidth: 3)
                         )
-                        .shadow(color: DianaTheme.neonBlue.opacity(0.6), radius: 6)
+                        .shadow(color: DianaTheme.neonOrange.opacity(0.6), radius: 6)
                 }
             }
         }
-        .mapStyle(.standard(pointsOfInterest: .excludingAll))
-        .mapControlVisibility(.hidden)
+        .mapStyle(.standard(pointsOfInterest: .including()))
+        .mapControlVisibility(.visible)
         .frame(maxWidth: .infinity)
         .frame(height: UIScreen.main.bounds.height * 2 / 3)
+        .onChange(of: viewModel.currentLocation) { _, newLocation in
+            guard let location = newLocation else { return }
+            withAnimation{
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: location,
+                    latitudinalMeters: 500,
+                    longitudinalMeters: 500
+                ))
+            }
+        }
     }
 
     // MARK: - 타이머 (중앙 강조)
@@ -249,6 +260,12 @@ struct ActiveRunView: View {
             }
             .buttonStyle(DianaCircleButtonStyle(color: DianaTheme.neonLime, size: 72))
         }
+    }
+}
+
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }
 
