@@ -38,6 +38,13 @@ struct RunDetailView: View {
                 DeleteConfirmDialog(
                     onDelete: {
                         modelContext.delete(record)
+                        
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print("삭제 실패: \(error.localizedDescription)")
+                        }
+                        
                         dismiss()
                     },
                     onCancel: {
@@ -81,7 +88,7 @@ struct RunDetailView: View {
             } else {
                 Map {
                     MapPolyline(coordinates: coordinates)
-                        .stroke(DianaTheme.neonLime, lineWidth: 4)
+                        .stroke(DianaTheme.neonOrange, lineWidth: 4)
                 }
                 .mapStyle(.standard(pointsOfInterest: .excludingAll))
                 .mapControlVisibility(.hidden)
@@ -101,6 +108,7 @@ struct RunDetailView: View {
             statCell(label: "심박수", value: heartRateString, unit: "bpm")
             statCell(label: "칼로리", value: "\(Int(record.calories))", unit: "kcal")
             statCell(label: "총 고도", value: "\(Int(record.elevationGain))", unit: "m")
+            statCell(label: "케이던스", value: "\(Int(record.elevationGain))", unit: "m")
         }
     }
 

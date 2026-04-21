@@ -41,7 +41,7 @@ struct ActiveRunView: View {
     // MARK: - 지도 영역
     private var mapSection: some View {
         Map(position: $cameraPosition) {
-            if !viewModel.routeCoordinates.isEmpty {
+            if !viewModel.recordedLocations.isEmpty {
                 MapPolyline(coordinates: viewModel.routeCoordinates)
                     .stroke(DianaTheme.neonOrange, lineWidth: 4)
             }

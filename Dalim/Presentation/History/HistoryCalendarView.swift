@@ -29,6 +29,9 @@ struct HistoryCalendarView: View {
         .navigationDestination(for: RunRecord.self) { record in
             RunDetailView(record: record)
         }
+        .onAppear {
+            selectedDate = Date()
+        }
     }
 
     // MARK: - 캘린더 카드
@@ -104,12 +107,12 @@ struct HistoryCalendarView: View {
     }
 
     private func dayCell(date: Date, isToday: Bool, hasRecord: Bool, isSelected: Bool) -> some View {
-        let glowColor: Color? = isToday ? DianaTheme.neonBlue : (hasRecord ? DianaTheme.neonLime : nil)
+        let glowColor: Color? = isToday ? DianaTheme.neonLime : (hasRecord ? DianaTheme.neonLime : nil)
 
         return VStack(spacing: 4) {
             Text("\(calendar.component(.day, from: date))")
                 .font(DianaTheme.captionEngFont(14))
-                .foregroundStyle(isToday ? DianaTheme.neonBlue : DianaTheme.textPrimary)
+                .foregroundStyle(isToday ? DianaTheme.neonLime : DianaTheme.textPrimary)
 
             Circle()
                 .frame(width: 6, height: 6)

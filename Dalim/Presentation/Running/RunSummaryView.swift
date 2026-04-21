@@ -211,17 +211,26 @@ struct RunSummaryView: View {
     // MARK: - 기록 저장
     private func saveRunRecord() {
         let now = Date()
-        let startDate = now.addingTimeInterval(-viewModel.elapsedTime)
+        guard let startDate = viewModel.startDate else { return }
+        
+//        let routePoints = viewModel.routeCoordinates.enumerated().map { index, coord in
+//            return RoutePoint(
+//                latitude: coord.latitude,
+//                longitude: coord.longitude,
+//                altitude: 0,
+//                timestamp: startDate.addingTimeInterval(Double(index) * (viewModel.elapsedTime / max(Double(viewModel.routeCoordinates.count), 1)))
+//            )
+//        }
 
-        let routePoints = viewModel.routeCoordinates.enumerated().map { index, coord in
+        let routePoints = viewModel.recordedLocations.map { loc in
             RoutePoint(
-                latitude: coord.latitude,
-                longitude: coord.longitude,
-                altitude: 0,
-                timestamp: startDate.addingTimeInterval(Double(index) * (viewModel.elapsedTime / max(Double(viewModel.routeCoordinates.count), 1)))
+                latitude: loc.coordinate.latitude,
+                longitude: loc.coordinate.longitude,
+                altitude: loc.altitude,
+                timestamp: loc.timestamp
             )
         }
-
+        
         let record = RunRecord(
             startDate: startDate,
             endDate: now,
@@ -235,6 +244,12 @@ struct RunSummaryView: View {
         )
 
         modelContext.insert(record)
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("저장 실패 \(error)")
+        }
     }
 }
 
@@ -249,7 +264,7 @@ extension ActiveRunViewModel {
         vm.elevationGain = 45
         vm.cadence = 172
         vm.pacePerKm = [360, 355, 340, 350, 345]
-        vm.routeCoordinates = [
+        vm.recordedLocations = [
             .init(latitude: 37.2636, longitude: 127.0286),
             .init(latitude: 37.2640, longitude: 127.0290),
             .init(latitude: 37.2645, longitude: 127.0295),

@@ -23,9 +23,16 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     var distance: Double = 0
     var currentPace: Double = 0
     var heartRate: Double = 0
-    var routeCoordinates: [CLLocationCoordinate2D] = []
+    
+    // NEW!
+    var recordedLocations: [CLLocation] = []
+    
+    var routeCoordinates: [CLLocationCoordinate2D] {
+        return recordedLocations.map(\.coordinate)
+    }
+    
     var currentLocation: CLLocationCoordinate2D?
-
+    
     // MARK: - HealthKit 권한 알림
     var showHealthKitAlert = false
 
@@ -41,7 +48,7 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
     private var timer: Timer?
     private var lastLocation: CLLocation?
     private var heartRateQuery: HKAnchoredObjectQuery?
-    private var startDate = Date()
+    private(set) var startDate: Date?
     private var lastRecordedKm: Int = 0
     private var lastKmTime: TimeInterval = 0
 
@@ -191,7 +198,7 @@ final class ActiveRunViewModel: NSObject, CLLocationManagerDelegate {
         let coordinate = newLocation.coordinate
         currentLocation = coordinate
         
-        routeCoordinates.append(coordinate)
+        recordedLocations.append(newLocation)
         
         if let last = lastLocation {
             let delta = newLocation.distance(from: last)

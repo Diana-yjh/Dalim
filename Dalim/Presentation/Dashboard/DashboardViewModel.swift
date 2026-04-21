@@ -82,7 +82,12 @@ final class DashboardViewModel {
             profile.authProvider = cached.provider
             profile.authUserID = cached.userID
             modelContext.insert(profile)
-            try? modelContext.save()
+            
+            do {
+                try modelContext.save()
+            } catch {
+                print("프로필 로드 실패: \(error.localizedDescription)")
+            }
 
             userName = cached.name
             isLinked = true
@@ -302,7 +307,12 @@ final class DashboardViewModel {
             return s
         }()
         settings.weeklyGoalKm = km
-        try? modelContext.save()
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("주간 목표 저장 실패")
+        }
         weeklyGoalKm = km
     }
 
