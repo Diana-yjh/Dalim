@@ -14,7 +14,7 @@ struct DashboardView: View {
     @State private var viewModel = DashboardViewModel()
     @State private var showLinkSheet = false
     @Binding var selectedTab: Int
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -25,7 +25,7 @@ struct DashboardView: View {
                         isLinked: viewModel.isLinked,
                         onLinkAccount: { showLinkSheet = true }
                     )
-
+                    
                     WeeklyRunningView(
                         weeklyDistance: viewModel.weeklyDistance,
                         weeklyGoalKm: viewModel.weeklyGoalKm,
@@ -77,6 +77,11 @@ struct DashboardView: View {
                                 : DianaTheme.textSecondary
                         )
                     }
+                    
+                    
+                        GoogleAdBannerView()
+                            .background(DianaTheme.backgroundPrimary)
+                        
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 24)

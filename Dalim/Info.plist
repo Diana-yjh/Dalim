@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GADApplicationIdentifier</key>
+	<string>$(GOOGLE_AD_IDENTIFIER)</string>
+	<key>OPENWEATHER_API_KEY</key>
+	<string>$(OPENWEATHER_API_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Outfit-Black.ttf</string>
@@ -25,13 +29,5 @@
 		<string>SpaceMono-Italic.ttf</string>
 		<string>SpaceMono-Regular.ttf</string>
 	</array>
-	<key>OPENWEATHER_API_KEY</key>
-	<string>$(OPENWEATHER_API_KEY)</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>러닝 경로를 기록하고 실시간 위치를 표시하기 위해 위치 정보가 필요합니다.</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>러닝 중 심박수를 실시간으로 표시하기 위해 건강 데이터 접근이 필요합니다.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>러닝 기록을 건강 앱에 저장하기 위해 건강 데이터 쓰기 권한이 필요합니다.</string>
 </dict>
 </plist>

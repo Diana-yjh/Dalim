@@ -28,6 +28,10 @@ struct MainTabView: View {
                 MyPageView()
             }
         }
+//        .safeAreaInset(edge: .top, spacing: 0) {
+//            GoogleAdBannerView()
+//                .background(DianaTheme.backgroundPrimary)
+//        }
         .tint(DianaTheme.neonLime)
         .onAppear {
             let appearance = UITabBarAppearance()

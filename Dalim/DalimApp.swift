@@ -7,12 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import GoogleMobileAds
 
 @main
 struct DalimApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             RunRecord.self,
+            RoutePoint.self,
             UserProfile.self,
             UserSettings.self,
         ])
@@ -24,6 +26,10 @@ struct DalimApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    
+    init() {
+        MobileAds.shared.start(completionHandler: nil)
+    }
 
     var body: some Scene {
         WindowGroup {
