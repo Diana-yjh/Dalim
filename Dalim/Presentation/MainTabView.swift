@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(DIContainer.self) private var diContainer
+    
     @State private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("대시보드", systemImage: "house.fill", value: 0) {
-                DashboardView(selectedTab: $selectedTab)
+                DashboardView(selectedTab: $selectedTab, viewModel: diContainer.makeDashboardViewModel())
             }
             
             Tab("러닝", systemImage: "figure.run", value: 1) {
-                RunningSetupView()
+                RunningSetupView(viewModel: diContainer.makeRunningSetupViewModel())
             }
             
             Tab("기록", systemImage: "list.star", value: 2) {

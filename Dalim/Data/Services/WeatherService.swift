@@ -50,7 +50,7 @@ struct WeatherInfo {
 
 // MARK: - WeatherService
 
-final class WeatherService: NSObject, CLLocationManagerDelegate {
+final class WeatherService: NSObject, WeatherServiceProtocol, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     private let weatherService = WeatherKit.WeatherService.shared
     private var locationContinuation: CheckedContinuation<CLLocation, Error>?
@@ -146,7 +146,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
     
     // 온도 (40점)
-    private func temperatureScore(_ temp: Int) -> Int {
+    func temperatureScore(_ temp: Int) -> Int {
         switch temp {
         case 10...18: return 40  // 최적
         case 8..<10, 18..<22: return 30
@@ -157,7 +157,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
 
     // 습도 (20점)
-    private func humidityScore(_ humidity: Int) -> Int {
+    func humidityScore(_ humidity: Int) -> Int {
         switch humidity {
         case 30...60: return 20  // 최적
         case 20..<30, 60..<70: return 15
@@ -168,7 +168,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
 
     // 바람 (20점)
-    private func windScore(_ windSpeed: Int) -> Int {
+    func windScore(_ windSpeed: Int) -> Int {
         switch windSpeed {
         case 0...3: return 20    // 잔잔
         case 3..<5: return 15
@@ -179,7 +179,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
 
     // 미세먼지 PM2.5 (20점)
-    private func aqiScore(_ aqi: Int) -> Int {
+    func aqiScore(_ aqi: Int) -> Int {
         switch aqi {
         case 0...15:  return 20  // 좋음
         case 15...35: return 15  // 보통
@@ -204,7 +204,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
         return convertAirQuality(pm10: pm10, pm25: pm2_5)
     }
 
-    private func convertAirQuality(pm10: Double, pm25: Double) -> String {
+    func convertAirQuality(pm10: Double, pm25: Double) -> String {
         // 각각 등급 계산
         let pm10Grade = pm10Grade(pm10)
         let pm25Grade = pm25Grade(pm25)
@@ -221,7 +221,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
 
     // 미세먼지 PM10 (한국 기준)
-    private func pm10Grade(_ pm10: Double) -> Int {
+    func pm10Grade(_ pm10: Double) -> Int {
         switch pm10 {
         case 0..<30:  return 1 // 좋음
         case 30..<80: return 2 // 보통
@@ -231,7 +231,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     }
 
     // 초미세먼지 PM2.5 (한국 기준)
-    private func pm25Grade(_ pm25: Double) -> Int {
+    func pm25Grade(_ pm25: Double) -> Int {
         switch pm25 {
         case 0..<15:  return 1 // 좋음
         case 15..<35: return 2 // 보통
@@ -242,7 +242,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
     
     // MARK: - Private
     
-    private func requestLocationAuthorization() async throws -> CLLocation {
+    func requestLocationAuthorization() async throws -> CLLocation {
         switch locationManager.authorizationStatus {
         case .notDetermined:
             try await requestAuthorizationIfNeeded()
@@ -258,7 +258,7 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    private func requestAuthorizationIfNeeded() async throws {
+    func requestAuthorizationIfNeeded() async throws {
         try await withCheckedThrowingContinuation { continuation in
             self.authContinuation = continuation
             locationManager.requestWhenInUseAuthorization()
@@ -277,18 +277,6 @@ final class WeatherService: NSObject, CLLocationManagerDelegate {
         }
     }
     
-//    private func runningSuitability(for weather: CurrentWeather) -> String {
-//        let temp = weather.apparentTemperature.value
-//        switch temp {
-//        case 5...25:
-//            return "러닝 적합 🟢"
-//        case 0..<5, 25..<30:
-//            return "러닝 보통 🟡"
-//        default:
-//            return "러닝 주의 🔴"
-//        }
-//    }
-
     // MARK: - CLLocationManagerDelegate
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

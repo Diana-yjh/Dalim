@@ -11,6 +11,8 @@ import GoogleMobileAds
 
 @main
 struct DalimApp: App {
+    @State private var diContainer = DIContainer()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             RunRecord.self,
@@ -34,6 +36,7 @@ struct DalimApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environment(diContainer)
         }
         .modelContainer(sharedModelContainer)
     }

@@ -47,9 +47,14 @@ final class DashboardViewModel {
     var suitability: Suitability = .none
     var isLocationDenied: Bool = false
     
-    private let weatherService = WeatherService()
-    private let healthStore = HKHealthStore()
+    private let weatherService: WeatherServiceProtocol
+    private let healthService: HealthServiceProtocol
 
+    init(weatherService: WeatherServiceProtocol, healthService: HealthServiceProtocol) {
+        self.weatherService = weatherService
+        self.healthService = healthService
+    }
+    
     // MARK: - 데이터 로딩
 
     func loadData(modelContext: ModelContext) async {
@@ -97,73 +102,56 @@ final class DashboardViewModel {
     // MARK: - HealthKit 데이터
 
     private func loadHealthData() async {
-        guard HKHealthStore.isHealthDataAvailable() else { return }
-
-        let stepType = HKQuantityType(.stepCount)
-        let energyType = HKQuantityType(.activeEnergyBurned)
-        let heartRateType = HKQuantityType(.heartRate)
-
-        let typesToRead: Set<HKSampleType> = [stepType, energyType, heartRateType]
-
         do {
-            try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
+            try await healthService.requestAuthorization()
         } catch {
-            print("HealthKit auth failed: \(error)")
+            print("HealthKit 권한이 필요합니다")
             return
         }
-
+        
         let calendar = Calendar.current
         let now = Date()
         let startOfDay = calendar.startOfDay(for: now)
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
-
-        // 걸음수
-        if let steps = try? await fetchSum(type: stepType, predicate: predicate, unit: .count()) {
-            todaySteps = formatNumber(Int(steps))
-        }
-
-        // 칼로리
-        if let kcal = try? await fetchSum(type: energyType, predicate: predicate, unit: .kilocalorie()) {
-            todayKcal = formatNumber(Int(kcal))
-        }
-
-        // 심박수 (최근)
-        if let bpm = try? await fetchLatestHeartRate() {
-            currentBPM = "\(Int(bpm))"
+        
+        async let stepsResult = fetchSafely { try await healthService.fetchTodaySteps() }
+        async let kcalResult = fetchSafely { try await healthService.fetchTodayActiveEnergy() }
+        async let bpmResult = fetchSafely { try await healthService.fetchLatestHeartRate() }
+        
+        let (steps, kcal, bpm) = await (stepsResult, kcalResult, bpmResult)
+        
+        if let steps { todaySteps = formatNumber(Int(steps)) }
+        if let kcal { todayKcal = formatNumber(Int(kcal)) }
+        if let bpm = bpm ?? nil { currentBPM = "\(Int(bpm))" }
+    }
+    
+    private func fetchSafely<T>(_ operation: () async throws -> T) async -> T? {
+        do {
+            return try await operation()
+        } catch {
+            print("HealthKit fetch failed: \(error)")
+            return nil
         }
     }
     
-    private func fetchSum(type: HKQuantityType, predicate: NSPredicate, unit: HKUnit) async throws -> Double {
-        try await withCheckedThrowingContinuation { continuation in
-            let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: result?.sumQuantity()?.doubleValue(for: unit) ?? 0)
-                }
-            }
-            healthStore.execute(query)
-        }
-    }
-    
-    private func fetchLatestHeartRate() async throws -> Double {
-        let heartRateType = HKQuantityType(.heartRate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-
-        return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(sampleType: heartRateType, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else if let sample = samples?.first as? HKQuantitySample {
-                    let bpm = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
-                    continuation.resume(returning: bpm)
-                } else {
-                    continuation.resume(throwing: NSError(domain: "HealthKit", code: -1))
-                }
-            }
-            self.healthStore.execute(query)
-        }
-    }
+//    private func fetchLatestHeartRate() async throws -> Double {
+//        let heartRateType = HKQuantityType(.heartRate)
+//        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+//
+//        return try await withCheckedThrowingContinuation { continuation in
+//            let query = HKSampleQuery(sampleType: heartRateType, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, error in
+//                if let error {
+//                    continuation.resume(throwing: error)
+//                } else if let sample = samples?.first as? HKQuantitySample {
+//                    let bpm = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
+//                    continuation.resume(returning: bpm)
+//                } else {
+//                    continuation.resume(throwing: NSError(domain: "HealthKit", code: -1))
+//                }
+//            }
+//            self.healthService.execute(query)
+//        }
+//    }
 
     private func formatNumber(_ value: Int) -> String {
         let formatter = NumberFormatter()

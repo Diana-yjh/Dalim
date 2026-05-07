@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct RunningSetupView: View {
-    @State private var viewModel = RunningSetupViewModel()
     @State private var isRunning = false
+    
+    @Bindable var viewModel: RunningSetupViewModel
 
+    init(viewModel: RunningSetupViewModel) {
+        self.viewModel = viewModel
+    }
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -224,8 +229,4 @@ struct RunningSetupView: View {
         .shadow(color: DianaTheme.neonLime.opacity(0.4), radius: 10)
         .padding(.top, 16)
     }
-}
-
-#Preview {
-    RunningSetupView()
 }

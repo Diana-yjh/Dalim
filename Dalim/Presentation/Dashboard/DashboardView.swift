@@ -11,9 +11,15 @@ import SwiftData
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
-    @State private var viewModel = DashboardViewModel()
     @State private var showLinkSheet = false
     @Binding var selectedTab: Int
+    
+    @State private var viewModel: DashboardViewModel
+    
+    init(selectedTab: Binding<Int> ,viewModel: DashboardViewModel) {
+        self._selectedTab = selectedTab
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         NavigationStack {
@@ -115,8 +121,4 @@ struct DashboardView: View {
             }
         }
     }
-}
-
-#Preview {
-    DashboardView(selectedTab: .constant(0))
 }
