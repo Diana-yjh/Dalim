@@ -9,8 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @Environment(DIContainer.self) private var diContainer
-    
-    @State private var selectedTab = 0
+    @SceneStorage("selectedTab") private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -30,21 +29,7 @@ struct MainTabView: View {
                 MyPageView()
             }
         }
-//        .safeAreaInset(edge: .top, spacing: 0) {
-//            GoogleAdBannerView()
-//                .background(DianaTheme.backgroundPrimary)
-//        }
         .tint(DianaTheme.neonLime)
-        .onAppear {
-            let appearance = UITabBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(DianaTheme.backgroundPrimary)
-            appearance.stackedLayoutAppearance.normal.iconColor = .white
-            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.stackedLayoutAppearance.selected.iconColor = UIColor(DianaTheme.neonLime)
-            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(DianaTheme.neonLime)]
-            UITabBar.appearance().standardAppearance = appearance
-            UITabBar.appearance().scrollEdgeAppearance = appearance
-        }
+        .preferredColorScheme(.dark)
     }
 }

@@ -25,9 +25,6 @@ struct HistoryView: View {
             }
             .background(DianaTheme.backgroundPrimary)
             .navigationTitle("기록")
-            .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Picker("보기 모드", selection: $selectedMode) {

@@ -97,4 +97,11 @@ extension View {
     func dianaCard(_ color: Color = DianaTheme.cardBorder) -> some View {
         modifier(DianaCardModifier(borderColor: color))
     }
+    
+    func unifiedTabBar() -> some View {
+        self
+            .toolbarBackground(DianaTheme.backgroundPrimary, for: .tabBar)
+            .toolbarBackgroundVisibility(.visible, for: .tabBar)
+            .toolbarColorScheme(.dark, for: .tabBar)
+    }
 }

@@ -29,9 +29,6 @@ struct RunningSetupView: View {
             }
             .background(DianaTheme.backgroundPrimary)
             .navigationTitle("러닝")
-            .toolbarBackground(DianaTheme.backgroundPrimary, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
             .fullScreenCover(isPresented: $isRunning) {
                 ActiveRunView()
             }
